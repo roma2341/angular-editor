@@ -50,5 +50,5 @@ export const angularEditorConfig: AngularEditorConfig = {
     {class: 'calibri', name: 'Calibri'},
     {class: 'comic-sans-ms', name: 'Comic Sans MS'}
   ],
-  uploadUrl: 'v1/image',
+  uploadUrl: null,
 };

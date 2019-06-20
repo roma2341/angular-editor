@@ -36,8 +36,9 @@ export class AngularEditorToolbarComponent {
     'justifyRight', 'justifyFull', 'indent', 'outdent', 'insertUnorderedList', 'insertOrderedList', 'link'];
 
   @Output() execute: EventEmitter<string> = new EventEmitter<string>();
+  @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
-  @ViewChild('fileInput') myInputFile: ElementRef;
+  @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
 
   constructor(private _renderer: Renderer2,
               private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: any) {
@@ -189,24 +190,28 @@ export class AngularEditorToolbarComponent {
   /**
    * Upload image when file is selected
    */
-  onFileChanged(event) {
-    const file = event.target.files[0];
-    if (file.type.includes('image/')) {
-        if (this.uploadUrl) {
-            this.editorService.uploadImage(file).subscribe(e => {
-              if (e instanceof HttpResponse) {
-                this.editorService.insertImage(e.body.imageUrl);
-                this.fileReset();
-              }
-            });
-        } else {
-          const reader = new FileReader();
-          reader.onload = (_event) => {
-            this.editorService.insertImage(_event.target['result']);
-          };
-          reader.readAsDataURL(file);
+  onFileChanged(event, blobInsert: boolean) {
+    if(blobInsert){
+      const file = event.target.files[0];
+      if (file.type.includes('image/')) {
+          if (this.uploadUrl) {
+              this.editorService.uploadImage(file).subscribe(e => {
+                if (e instanceof HttpResponse) {
+                  this.editorService.insertImage(e.body.imageUrl);
+                  this.fileReset();
+                }
+              });
+          } else {
+            const reader = new FileReader();
+            reader.onload = (_event) => {
+              this.editorService.insertImage(_event.target['result']);
+            };
+            reader.readAsDataURL(file);
+          }
         }
-      }
+    }else{
+      this.fileAdded.emit(event);
+    }
   }
 
   /**
