@@ -19,7 +19,7 @@ export class AngularEditorToolbarComponent {
   defaultFontId;
   fontId = 0;
   fontSize = '5';
-  fonts: Font[];
+  fonts: Font[] = [];
 
   customClassId = -1;
   customClasses: CustomClass[];
@@ -41,7 +41,7 @@ export class AngularEditorToolbarComponent {
   @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
 
   constructor(private _renderer: Renderer2,
-              private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: any) {
+              private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: Document) {
   }
 
   /**
@@ -62,11 +62,13 @@ export class AngularEditorToolbarComponent {
     this.buttons.forEach(e => {
       const result = this._document.queryCommandState(e);
       const elementById = this._document.getElementById(e + '-' + this.id);
-      if (result) {
-        this._renderer.addClass(elementById, 'active');
-      } else {
-        this._renderer.removeClass(elementById, 'active');
-      }
+      if(elementById){
+        if (result) {
+          this._renderer.addClass(elementById, 'active');
+        } else {
+          this._renderer.removeClass(elementById, 'active');
+        }
+      }      
     });
   }
 

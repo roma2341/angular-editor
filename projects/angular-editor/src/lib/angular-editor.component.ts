@@ -12,11 +12,11 @@ import {
   ElementRef,
   AfterViewInit
 } from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AngularEditorConfig, angularEditorConfig} from './config';
-import {AngularEditorToolbarComponent} from './angular-editor-toolbar.component';
-import {AngularEditorService} from './angular-editor.service';
-import {DOCUMENT} from '@angular/common';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { AngularEditorConfig, angularEditorConfig } from './config';
+import { AngularEditorToolbarComponent } from './angular-editor-toolbar.component';
+import { AngularEditorService } from './angular-editor.service';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'angular-editor',
@@ -45,9 +45,9 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @Output() html;
 
-  @ViewChild('editor', { static: false }) textArea: ElementRef;
-  @ViewChild('editorWrapper', { static: false }) editorWrapper: ElementRef;
-  @ViewChild('editorToolbar', { static: false }) editorToolbar: AngularEditorToolbarComponent;
+  @ViewChild('editor', { static: true }) textArea: ElementRef;
+  @ViewChild('editorWrapper', { static: true }) editorWrapper: ElementRef;
+  @ViewChild('editorToolbar', { static: true }) editorToolbar: AngularEditorToolbarComponent;
 
   @Output() viewMode = new EventEmitter<boolean>();
 
@@ -63,10 +63,6 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   }
 
   ngOnInit() {
-
-  }
-
-  ngAfterViewInit(): void {
     this.editorToolbar.id = this.id;
     this.editorToolbar.fonts = this.config.fonts ? this.config.fonts : angularEditorConfig.fonts;
     this.editorToolbar.customClasses = this.config.customClasses;
@@ -78,7 +74,10 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     if (this.config.defaultParagraphSeparator) {
       this.editorService.setDefaultParagraphSeparator(this.config.defaultParagraphSeparator);
     }
-    
+
+  }
+
+  ngAfterViewInit(): void {
     if (this.config.defaultFontName) {
       this.editorToolbar.defaultFontId = this.config.defaultFontName ? this.editorToolbar.fonts.findIndex(x => {
         return x.name === this.config.defaultFontName;
@@ -98,7 +97,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   }
 
   ngAfterContentInit() {
- 
+
   }
 
   /**
