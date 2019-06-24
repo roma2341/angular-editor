@@ -164,22 +164,23 @@ export class AngularEditorService {
 
   private replaceSelectedText(replacementNode: Node) {
     let sel, range;
-    debugger;
     if (window.getSelection) {
       sel = window.getSelection();
       if (sel.rangeCount) {
         range = sel.getRangeAt(0);
         range.deleteContents();
         range.insertNode(replacementNode);
+        window.getSelection().removeAllRanges();
       }
     }
+
   }
 
   /**
    * Insert image with Url
    * @param imageUrl
    */
-  insertImage(imageUrl: string, vcRef: ViewContainerRef, config?: EditorResizableImgConfig) {
+  insertImage(imageUrl: string, vcRef: ViewContainerRef, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
     /**
      * mwlResizable
       [enableGhostResize]="true"
@@ -194,7 +195,7 @@ export class AngularEditorService {
     img.instance.src = imageUrl;
     img.instance.config = config;
     imgContainer.appendChild((img.instance.elm.nativeElement as HTMLElement));
-
+    return img;
     /*const img = this._renderer.createElement('img') as HTMLElement;
     img.setAttribute('src', imageUrl);
     img.setAttribute('mwlResizable', 'true');

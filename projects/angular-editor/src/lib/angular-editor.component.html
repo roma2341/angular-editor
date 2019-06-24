@@ -1,6 +1,6 @@
 <div (focus)="onEditorFocus()" class="angular-editor" id="angularEditor" [style.width]="config.width"
      [style.minWidth]="config.minWidth">
-  <angular-editor-toolbar #editorToolbar (fileAdded)="fileAdded.emit($event)" (execute)="executeCommand($event)"></angular-editor-toolbar>
+  <angular-editor-toolbar #editorToolbar (update)="onContentChange(editor.innerHTML)" (fileAdded)="fileAdded.emit($event)" (execute)="executeCommand($event)"></angular-editor-toolbar>
 
   <div class="angular-editor-wrapper" #editorWrapper>
     <div #editor id="editor" class="angular-editor-textarea" [attr.contenteditable]="config.editable"

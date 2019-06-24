@@ -140,22 +140,25 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     }
   }
 
-  onPast(e: ClipboardEvent){
+  onPast(e: ClipboardEvent) {
     if (e.clipboardData) {
       // Get the items from the clipboard
       var items = e.clipboardData.items;
       if (items) {
-         // Loop through all items, looking for any kind of image
-         for (var i = 0; i < items.length; i++) {
-            if (items[i].type.indexOf("image") !== -1) {
-               // We need to represent the image as a file,
-               var blob = items[i].getAsFile();
-               var source = window.URL.createObjectURL(blob);
-               this.editorService.insertImage(source, this.vcRef);
-            }
-         }
+        // Loop through all items, looking for any kind of image
+        for (var i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf("image") !== -1) {
+            // We need to represent the image as a file,
+            var blob = items[i].getAsFile();
+            var source = window.URL.createObjectURL(blob);
+            const img = this.editorService.insertImage(source, this.vcRef);
+            img.instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+            img.instance.ready.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+          }
+        }
+        
       }
-   }
+    }
   }
 
   /**
@@ -184,16 +187,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       if ((!html || html === '<br>' || html === '') !== this.showPlaceholder) {
         this.togglePlaceholder(this.showPlaceholder);
       }
-      const area = this.textArea.nativeElement as HTMLElement;
-      area.querySelectorAll('img').forEach(item => {
-        if (item.parentElement.tagName != 'EDITOR-IMG') {
-          const selection = window.getSelection();
-          let range = document.createRange();
-          range.selectNode(item);
-          selection.addRange(range);
-          this.editorService.insertImage(item.getAttribute('src'), this.vcRef, { width: item.width, height: item.height, resizable: true });
-        }
-      })
+      this.initImageResizers();
     }
   }
 
@@ -243,8 +237,24 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   refreshView(value: string): void {
     const normalizedValue = value === null ? '' : value;
     this._renderer.setProperty(this.textArea.nativeElement, 'innerHTML', normalizedValue);
-
+    this.initImageResizers();
     return;
+  }
+
+  initImageResizers() {
+    const area = this.textArea.nativeElement as HTMLElement;
+    area.querySelectorAll('img').forEach(item => {
+      if (item.parentElement.tagName != 'EDITOR-IMG') {
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        let range = document.createRange();
+        range.selectNode(item);
+        selection.addRange(range);
+        this.editorService
+          .insertImage(item.getAttribute('src'), this.vcRef, { width: item.width, height: item.height, resizable: true })
+          .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+      }
+    })
   }
 
   /**

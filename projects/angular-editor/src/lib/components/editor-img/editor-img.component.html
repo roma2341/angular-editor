@@ -1,1 +1,1 @@
-<img #img [src]="safeSrc" mwlResizable (resizeEnd)="onResizeEnd($event)" [resizeCursorPrecision]="5" [enableGhostResize]="true" [resizeEdges]="{bottom: true, right: true, top: true, left: true}">
+<img #img [src]="safeSrc" mwlResizable (resizeEnd)="onResizeEnd($event)" [ghostElementPositioning]="'absolute'" [resizeCursorPrecision]="5" [enableGhostResize]="true" [resizeEdges]="{bottom: true, right: true, top: true, left: true}">

@@ -1,8 +1,8 @@
-import {Component, ElementRef, EventEmitter, Inject, Output, Renderer2, ViewChild, ViewContainerRef} from '@angular/core';
-import {AngularEditorService} from './angular-editor.service';
-import {HttpResponse} from '@angular/common/http';
-import {DOCUMENT} from '@angular/common';
-import {CustomClass, Font} from './config';
+import { Component, ElementRef, EventEmitter, Inject, Output, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { AngularEditorService } from './angular-editor.service';
+import { HttpResponse } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
+import { CustomClass, Font } from './config';
 
 @Component({
   selector: 'angular-editor-toolbar',
@@ -36,12 +36,13 @@ export class AngularEditorToolbarComponent {
     'justifyRight', 'justifyFull', 'indent', 'outdent', 'insertUnorderedList', 'insertOrderedList', 'link'];
 
   @Output() execute: EventEmitter<string> = new EventEmitter<string>();
+  @Output() update: EventEmitter<void> = new EventEmitter<void>();
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
   @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
 
   constructor(public vcRef: ViewContainerRef, private _renderer: Renderer2,
-              private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: Document) {
+    private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: Document) {
   }
 
   /**
@@ -62,13 +63,13 @@ export class AngularEditorToolbarComponent {
     this.buttons.forEach(e => {
       const result = this._document.queryCommandState(e);
       const elementById = this._document.getElementById(e + '-' + this.id);
-      if(elementById){
+      if (elementById) {
         if (result) {
           this._renderer.addClass(elementById, 'active');
         } else {
           this._renderer.removeClass(elementById, 'active');
         }
-      }      
+      }
     });
   }
 
@@ -193,27 +194,32 @@ export class AngularEditorToolbarComponent {
    * Upload image when file is selected
    */
   onFileChanged(event, blobInsert: boolean) {
-    if(blobInsert){
+    if (blobInsert) {
       const file = event.target.files[0];
       if (file.type.includes('image/')) {
-          if (this.uploadUrl) {
-              this.editorService.uploadImage(file).subscribe(e => {
-                if (e instanceof HttpResponse) {
-                  this.editorService.insertImage(e.body.imageUrl, this.vcRef);
-                  this.fileReset();
-                }
-              });
-          } else {
-            const reader = new FileReader();
-            reader.onload = (_event) => {
-              this.editorService.insertImage(_event.target['result'], this.vcRef);
-            };
-            reader.readAsDataURL(file);
-          }
+        if (this.uploadUrl) {
+          this.editorService.uploadImage(file).subscribe(e => {
+            if (e instanceof HttpResponse) {
+              const img = this.editorService.insertImage(e.body.imageUrl, this.vcRef);
+              img.instance.resizeEnd.subscribe(() => this.update.emit());
+              img.instance.ready.subscribe(() => this.update.emit());
+              this.fileReset();
+            }
+          });
+        } else {
+          const reader = new FileReader();
+          reader.onload = (_event) => {
+            const img = this.editorService.insertImage(_event.target['result'], this.vcRef);
+            img.instance.resizeEnd.subscribe(() => this.update.emit());
+            img.instance.ready.subscribe(() => this.update.emit());
+          };
+          reader.readAsDataURL(file);
         }
-    }else{
+      }
+    } else {
       this.fileAdded.emit(event);
     }
+
   }
 
   /**
