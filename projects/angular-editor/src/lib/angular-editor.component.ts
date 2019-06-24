@@ -10,7 +10,8 @@ import {
   Renderer2,
   ViewChild,
   ElementRef,
-  AfterViewInit
+  AfterViewInit,
+  ViewContainerRef
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { AngularEditorConfig, angularEditorConfig } from './config';
@@ -31,8 +32,6 @@ import { DOCUMENT } from '@angular/common';
   ]
 })
 export class AngularEditorComponent implements OnInit, ControlValueAccessor, AfterViewInit, AfterContentInit {
-
-
   private onChange: (value: string) => void;
   private onTouched: () => void;
 
@@ -59,7 +58,8 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
-  constructor(private _renderer: Renderer2, private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: any) {
+  constructor(public vcRef: ViewContainerRef, private _renderer: Renderer2, private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: any) {
+    debugger;
   }
 
   ngOnInit() {
@@ -140,6 +140,24 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     }
   }
 
+  onPast(e: ClipboardEvent){
+    if (e.clipboardData) {
+      // Get the items from the clipboard
+      var items = e.clipboardData.items;
+      if (items) {
+         // Loop through all items, looking for any kind of image
+         for (var i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf("image") !== -1) {
+               // We need to represent the image as a file,
+               var blob = items[i].getAsFile();
+               var source = window.URL.createObjectURL(blob);
+               this.editorService.insertImage(source, this.vcRef);
+            }
+         }
+      }
+   }
+  }
+
   /**
    *  focus the text area when the editor is focussed
    */
@@ -158,12 +176,24 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
    * @param html html string from contenteditable
    */
   onContentChange(html: string): void {
-
     if (typeof this.onChange === 'function') {
-      this.onChange(html);
+      const regex = /<editor-img .+(<img .+>)<\/editor-img>/gm;
+      this.onChange(html.replace(regex, (value, img) => {
+        return img;
+      }));
       if ((!html || html === '<br>' || html === '') !== this.showPlaceholder) {
         this.togglePlaceholder(this.showPlaceholder);
       }
+      const area = this.textArea.nativeElement as HTMLElement;
+      area.querySelectorAll('img').forEach(item => {
+        if (item.parentElement.tagName != 'EDITOR-IMG') {
+          const selection = window.getSelection();
+          let range = document.createRange();
+          range.selectNode(item);
+          selection.addRange(range);
+          this.editorService.insertImage(item.getAttribute('src'), this.vcRef, { width: item.width, height: item.height, resizable: true });
+        }
+      })
     }
   }
 

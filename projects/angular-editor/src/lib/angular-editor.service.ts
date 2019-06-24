@@ -1,8 +1,11 @@
-import {Inject, Injectable} from '@angular/core';
-import {HttpClient, HttpEvent} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {DOCUMENT} from '@angular/common';
-import {CustomClass} from './config';
+import { Inject, Injectable, Renderer2, RendererFactory2, PLATFORM_ID, ElementRef, NgZone, ComponentFactoryResolver, ComponentFactory, Injector, ViewContainerRef, ComponentRef } from '@angular/core';
+import { HttpClient, HttpEvent } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { DOCUMENT } from '@angular/common';
+import { CustomClass } from './config';
+import { ResizableDirective } from 'angular-resizable-element';
+import { createCustomElement } from '@angular/elements';
+import { EditorResizableImgComponent, EditorResizableImgConfig } from './components/editor-img/editor-img.component';
 
 export interface UploadResponse {
   imageUrl: string;
@@ -15,8 +18,10 @@ export class AngularEditorService {
   selectedText: string;
   uploadUrl: string;
 
+  private _renderer: Renderer2;
 
-  constructor(private http: HttpClient, @Inject(DOCUMENT) private _document: any) {
+  constructor(private injector: Injector, private componentFactoryResolver: ComponentFactoryResolver, rendererFactory: RendererFactory2, @Inject(PLATFORM_ID) private platformId: any, private zone: NgZone, private http: HttpClient, @Inject(DOCUMENT) private _document: any) {
+    this._renderer = rendererFactory.createRenderer(null, null);
   }
 
   /**
@@ -157,12 +162,46 @@ export class AngularEditorService {
     });
   }
 
+  private replaceSelectedText(replacementNode: Node) {
+    let sel, range;
+    debugger;
+    if (window.getSelection) {
+      sel = window.getSelection();
+      if (sel.rangeCount) {
+        range = sel.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(replacementNode);
+      }
+    }
+  }
+
   /**
    * Insert image with Url
    * @param imageUrl
    */
-  insertImage(imageUrl: string) {
-    this._document.execCommand('insertImage', false, imageUrl);
+  insertImage(imageUrl: string, vcRef: ViewContainerRef, config?: EditorResizableImgConfig) {
+    /**
+     * mwlResizable
+      [enableGhostResize]="true"
+      [resizeEdges]="{bottom: true, right: true, top: true, left: true}"
+      (resizeEnd)="onResizeEnd($event)"
+     */
+
+    const factory: ComponentFactory<EditorResizableImgComponent> = this.componentFactoryResolver.resolveComponentFactory(EditorResizableImgComponent);
+    const imgContainer = this._renderer.createElement('span') as HTMLElement;
+    this.replaceSelectedText(imgContainer);
+    const img = vcRef.createComponent(factory);
+    img.instance.src = imageUrl;
+    img.instance.config = config;
+    imgContainer.appendChild((img.instance.elm.nativeElement as HTMLElement));
+
+    /*const img = this._renderer.createElement('img') as HTMLElement;
+    img.setAttribute('src', imageUrl);
+    img.setAttribute('mwlResizable', 'true');
+    img.style.width = '100px';
+
+    this.replaceSelectedText(img);*/
+
   }
 
   setDefaultParagraphSeparator(separator: string) {

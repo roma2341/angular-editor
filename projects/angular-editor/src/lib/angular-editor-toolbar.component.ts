@@ -1,4 +1,4 @@
-import {Component, ElementRef, EventEmitter, Inject, Output, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, Inject, Output, Renderer2, ViewChild, ViewContainerRef} from '@angular/core';
 import {AngularEditorService} from './angular-editor.service';
 import {HttpResponse} from '@angular/common/http';
 import {DOCUMENT} from '@angular/common';
@@ -40,7 +40,7 @@ export class AngularEditorToolbarComponent {
 
   @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
 
-  constructor(private _renderer: Renderer2,
+  constructor(public vcRef: ViewContainerRef, private _renderer: Renderer2,
               private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: Document) {
   }
 
@@ -199,14 +199,14 @@ export class AngularEditorToolbarComponent {
           if (this.uploadUrl) {
               this.editorService.uploadImage(file).subscribe(e => {
                 if (e instanceof HttpResponse) {
-                  this.editorService.insertImage(e.body.imageUrl);
+                  this.editorService.insertImage(e.body.imageUrl, this.vcRef);
                   this.fileReset();
                 }
               });
           } else {
             const reader = new FileReader();
             reader.onload = (_event) => {
-              this.editorService.insertImage(_event.target['result']);
+              this.editorService.insertImage(_event.target['result'], this.vcRef);
             };
             reader.readAsDataURL(file);
           }

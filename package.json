@@ -19,10 +19,13 @@
     "@angular/common": "^8.0.2",
     "@angular/compiler": "^8.0.2",
     "@angular/core": "^8.0.2",
+    "@angular/elements": "^8.0.2",
     "@angular/forms": "^8.0.2",
     "@angular/platform-browser": "^8.0.2",
     "@angular/platform-browser-dynamic": "^8.0.2",
     "@angular/router": "^8.0.2",
+    "@webcomponents/custom-elements": "^1.2.4",
+    "angular-resizable-element": "^3.2.4",
     "rxjs": "~6.5.2",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
