@@ -162,47 +162,68 @@ export class AngularEditorService {
     });
   }
 
-  private replaceSelectedText(replacementNode: Node) {
-    let sel, range;
+  placeCaretAtEnd(el: HTMLElement) {
+    el.focus();
+    if (typeof window.getSelection != "undefined"
+      && typeof document.createRange != "undefined") {
+      var range = document.createRange();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      return range;
+    } else if (typeof (document.body as any).createTextRange != "undefined") {
+      var textRange = (document.body as any).createTextRange();
+      textRange.moveToElementText(el);
+      textRange.collapse(false);
+      textRange.select();
+      return textRange;
+    }
+  }
+
+  private replaceSelectedText(replacementNode: Node, textArea: HTMLElement) {
+    let sel: Selection, range: Range;
+    let thisContext = false;
+
     if (window.getSelection) {
       sel = window.getSelection();
       if (sel.rangeCount) {
         range = sel.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(replacementNode);
-        window.getSelection().removeAllRanges();
-      }
-    }
+        let parentElm = range.commonAncestorContainer;
 
+        while (parentElm = parentElm.parentElement) {
+          if (parentElm == textArea) {
+            thisContext = true;
+            break;
+          }
+        }
+      }
+
+      if (!thisContext) {
+        range = this.placeCaretAtEnd(textArea);
+      }
+
+      range.deleteContents();
+      range.insertNode(replacementNode);
+      window.getSelection().removeAllRanges();
+    }
   }
 
   /**
    * Insert image with Url
    * @param imageUrl
    */
-  insertImage(imageUrl: string, vcRef: ViewContainerRef, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
-    /**
-     * mwlResizable
-      [enableGhostResize]="true"
-      [resizeEdges]="{bottom: true, right: true, top: true, left: true}"
-      (resizeEnd)="onResizeEnd($event)"
-     */
-
+  insertImage(imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
     const factory: ComponentFactory<EditorResizableImgComponent> = this.componentFactoryResolver.resolveComponentFactory(EditorResizableImgComponent);
     const imgContainer = this._renderer.createElement('span') as HTMLElement;
-    this.replaceSelectedText(imgContainer);
+    this.replaceSelectedText(imgContainer, textArea);
     const img = vcRef.createComponent(factory);
+    vcRef.element.nativeElement
     img.instance.src = imageUrl;
     img.instance.config = config;
     imgContainer.appendChild((img.instance.elm.nativeElement as HTMLElement));
     return img;
-    /*const img = this._renderer.createElement('img') as HTMLElement;
-    img.setAttribute('src', imageUrl);
-    img.setAttribute('mwlResizable', 'true');
-    img.style.width = '100px';
-
-    this.replaceSelectedText(img);*/
-
   }
 
   setDefaultParagraphSeparator(separator: string) {

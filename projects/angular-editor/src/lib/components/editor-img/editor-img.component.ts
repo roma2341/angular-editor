@@ -40,7 +40,6 @@ export class EditorResizableImgComponent implements OnInit, OnChanges, OnDestroy
   }
 
   ngOnInit() {
-    debugger;
     this.applyConfig();
     this.safeSrc = this.sanitizer.bypassSecurityTrustUrl(this.src);
     

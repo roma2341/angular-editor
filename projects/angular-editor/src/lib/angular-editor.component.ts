@@ -59,13 +59,14 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
   constructor(public vcRef: ViewContainerRef, private _renderer: Renderer2, private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: any) {
-    debugger;
+
   }
 
   ngOnInit() {
     this.editorToolbar.id = this.id;
     this.editorToolbar.fonts = this.config.fonts ? this.config.fonts : angularEditorConfig.fonts;
     this.editorToolbar.customClasses = this.config.customClasses;
+    this.editorToolbar.textArea = this.textArea;
     this.editorToolbar.uploadUrl = this.config.uploadUrl;
     this.editorService.uploadUrl = this.config.uploadUrl;
     if (this.config.showToolbar !== undefined) {
@@ -150,13 +151,19 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
           if (items[i].type.indexOf("image") !== -1) {
             // We need to represent the image as a file,
             var blob = items[i].getAsFile();
-            var source = window.URL.createObjectURL(blob);
-            const img = this.editorService.insertImage(source, this.vcRef);
-            img.instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
-            img.instance.ready.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+            var reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+              const area = this.textArea.nativeElement as HTMLElement;
+              var source = reader.result as string;
+              const img = this.editorService.insertImage(source, this.vcRef, area);
+              img.instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+              img.instance.ready.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+            }
+
           }
         }
-        
+
       }
     }
   }
@@ -251,7 +258,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
         range.selectNode(item);
         selection.addRange(range);
         this.editorService
-          .insertImage(item.getAttribute('src'), this.vcRef, { width: item.width, height: item.height, resizable: true })
+          .insertImage(item.getAttribute('src'), this.vcRef, area, { width: item.width, height: item.height, resizable: true })
           .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
       }
     })
