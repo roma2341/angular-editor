@@ -15,12 +15,15 @@ export class AngularEditorToolbarComponent {
   id = '';
   htmlMode = false;
   showToolbar = true;
-
+  linkSelected = false;
   block = 'default';
   defaultFontId;
-  fontId = 0;
+  fontName;
   fontSize = '5';
-  fonts: Font[] = [];
+  foreColour;
+  backColor;
+
+  fonts: Font[];
 
   customClassId = -1;
   customClasses: CustomClass[];
@@ -40,15 +43,20 @@ export class AngularEditorToolbarComponent {
   @Output() update: EventEmitter<void> = new EventEmitter<void>();
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
-
   @Input()
   textArea: ElementRef;
 
   @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
 
-  constructor(public vcRef: ViewContainerRef, private _renderer: Renderer2,
-    private editorService: AngularEditorService, @Inject(DOCUMENT) private _document: Document) {
+  public get isLinkButtonDisabled(): boolean {
+    return this.htmlMode || !Boolean(this.editorService.selectedText);
   }
+
+  constructor(
+    private r: Renderer2,
+    private editorService: AngularEditorService,
+    @Inject(DOCUMENT) private doc: any, public vcRef: ViewContainerRef
+  ) { }
 
   /**
    * Trigger command from editor header buttons
@@ -66,14 +74,12 @@ export class AngularEditorToolbarComponent {
       return;
     }
     this.buttons.forEach(e => {
-      const result = this._document.queryCommandState(e);
-      const elementById = this._document.getElementById(e + '-' + this.id);
-      if (elementById) {
-        if (result) {
-          this._renderer.addClass(elementById, 'active');
-        } else {
-          this._renderer.removeClass(elementById, 'active');
-        }
+      const result = this.doc.queryCommandState(e);
+      const elementById = this.doc.getElementById(e + '-' + this.id);
+      if (result) {
+        this.r.addClass(elementById, 'active');
+      } else {
+        this.r.removeClass(elementById, 'active');
       }
     });
   }
@@ -85,6 +91,7 @@ export class AngularEditorToolbarComponent {
     if (!this.showToolbar) {
       return;
     }
+    this.linkSelected = nodes.findIndex(x => x.nodeName === 'A') > -1;
     let found = false;
     this.select.forEach(y => {
       const node = nodes.find(x => x.nodeName === y);
@@ -97,25 +104,6 @@ export class AngularEditorToolbarComponent {
         this.block = 'default';
       }
     });
-
-    found = false;
-    if (this.fonts) {
-      this.fonts.forEach((y, index) => {
-        const node = nodes.find(x => {
-          if (x instanceof HTMLFontElement) {
-            return x.face === y.name;
-          }
-        });
-        if (node !== undefined) {
-          if (found === false) {
-            this.fontId = index;
-            found = true;
-          }
-        } else if (found === false) {
-          this.fontId = this.defaultFontId;
-        }
-      });
-    }
 
     found = false;
     if (this.customClasses) {
@@ -137,23 +125,47 @@ export class AngularEditorToolbarComponent {
     }
 
     Object.keys(this.tagMap).map(e => {
-      const elementById = this._document.getElementById(this.tagMap[e] + '-' + this.id);
+      const elementById = this.doc.getElementById(this.tagMap[e] + '-' + this.id);
       const node = nodes.find(x => x.nodeName === e);
       if (node !== undefined && e === node.nodeName) {
-        this._renderer.addClass(elementById, 'active');
+        this.r.addClass(elementById, 'active');
       } else {
-        this._renderer.removeClass(elementById, 'active');
+        this.r.removeClass(elementById, 'active');
       }
     });
+
+    this.foreColour = this.doc.queryCommandValue('ForeColor');
+    this.fontSize = this.doc.queryCommandValue('FontSize');
+    this.fontName = this.doc.queryCommandValue('FontName').replace(/"/g, '');
+    this.backColor = this.doc.queryCommandValue('backColor');
   }
 
   /**
    * insert URL link
    */
   insertUrl() {
-    const url = prompt('Insert URL link', 'http:\/\/');
-    if (url && url !== '' && url !== 'http://') {
+    let url = 'https:\/\/';
+    const selection = this.editorService.savedSelection;
+    if (selection && selection.commonAncestorContainer.parentElement.nodeName === 'A') {
+      const parent = selection.commonAncestorContainer.parentElement as HTMLAnchorElement;
+      if (parent.href !== '') {
+        url = parent.href;
+      }
+    }
+    url = prompt('Insert URL link', url);
+    if (url && url !== '' && url !== 'https://') {
       this.editorService.createLink(url);
+    }
+  }
+
+  /**
+   * insert Video link
+   */
+  insertVideo() {
+    this.execute.emit('');
+    const url = prompt('Insert Video link', `https://`);
+    if (url && url !== '' && url !== `https://`) {
+      this.editorService.insertVideo(url);
     }
   }
 
@@ -165,17 +177,17 @@ export class AngularEditorToolbarComponent {
 
   /**
    * set font Name/family
-   * @param fontId number
+   * @param foreColor string
    */
-  setFontName(fontId: number): void {
-    this.editorService.setFontName(this.fonts[fontId].name);
+  setFontName(foreColor: string): void {
+    this.editorService.setFontName(foreColor);
     this.execute.emit('');
   }
 
   /**
    * set font Size
    * @param fontSize string
-   *  */
+   */
   setFontSize(fontSize: string): void {
     this.editorService.setFontSize(fontSize);
     this.execute.emit('');
@@ -186,11 +198,11 @@ export class AngularEditorToolbarComponent {
    * @param m boolean
    */
   setEditorMode(m: boolean) {
-    const toggleEditorModeButton = this._document.getElementById('toggleEditorMode' + '-' + this.id);
+    const toggleEditorModeButton = this.doc.getElementById('toggleEditorMode' + '-' + this.id);
     if (m) {
-      this._renderer.addClass(toggleEditorModeButton, 'active');
+      this.r.addClass(toggleEditorModeButton, 'active');
     } else {
-      this._renderer.removeClass(toggleEditorModeButton, 'active');
+      this.r.removeClass(toggleEditorModeButton, 'active');
     }
     this.htmlMode = m;
   }
@@ -239,6 +251,10 @@ export class AngularEditorToolbarComponent {
    * Set custom class
    */
   setCustomClass(classId: number) {
-    this.editorService.createCustomClass(this.customClasses[classId]);
+    if (classId === -1) {
+      this.execute.emit('clear');
+    } else {
+      this.editorService.createCustomClass(this.customClasses[classId]);
+    }
   }
 }

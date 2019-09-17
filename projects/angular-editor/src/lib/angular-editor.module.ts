@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { AngularEditorService } from './angular-editor.service';
 import { ResizableModule } from 'angular-resizable-element';
 import { EditorResizableImgComponent } from './components/editor-img/editor-img.component';
-import { createCustomElement } from '@angular/elements';
 
 @NgModule({
   imports: [
@@ -30,7 +29,5 @@ import { createCustomElement } from '@angular/elements';
 })
 export class AngularEditorModule {
   constructor(private injector: Injector) {
-   /* const customButton = createCustomElement(EditorImgComponent, { injector });
-    customElements.define('editor-img', customButton);*/
   }
 }
