@@ -2,10 +2,11 @@ import { Inject, Injectable, Renderer2, RendererFactory2, PLATFORM_ID, ElementRe
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
-import { CustomClass } from './config';
+import { CustomClass, AngularEditorConfig, angularEditorConfig } from './config';
 import { ResizableDirective } from 'angular-resizable-element';
 import { createCustomElement } from '@angular/elements';
 import { EditorResizableImgComponent, EditorResizableImgConfig } from './components/editor-img/editor-img.component';
+import { DomSanitizer } from '@angular/platform-browser';
 
 export interface UploadResponse {
   imageUrl: string;
@@ -20,7 +21,7 @@ export class AngularEditorService {
 
   private _renderer: Renderer2;
 
-  constructor(private injector: Injector, private componentFactoryResolver: ComponentFactoryResolver, rendererFactory: RendererFactory2, @Inject(PLATFORM_ID) private platformId: any, private zone: NgZone, private http: HttpClient, @Inject(DOCUMENT) private _document: any) {
+  constructor(protected sanitizer: DomSanitizer, private injector: Injector, private componentFactoryResolver: ComponentFactoryResolver, rendererFactory: RendererFactory2, @Inject(PLATFORM_ID) private platformId: any, private zone: NgZone, private http: HttpClient, @Inject(DOCUMENT) private _document: any) {
     this._renderer = rendererFactory.createRenderer(null, null);
   }
 
@@ -214,13 +215,20 @@ export class AngularEditorService {
    * Insert image with Url
    * @param imageUrl
    */
-  insertImage(imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
+  insertImage(angularEditorConfig: AngularEditorConfig, local: boolean, imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
     const factory: ComponentFactory<EditorResizableImgComponent> = this.componentFactoryResolver.resolveComponentFactory(EditorResizableImgComponent);
     const imgContainer = this._renderer.createElement('span') as HTMLElement;
     this.replaceSelectedText(imgContainer, textArea);
     const img = vcRef.createComponent(factory);
-    vcRef.element.nativeElement
-    img.instance.src = imageUrl;
+    img.instance.src = 'https://loading.io/spinners/camera/index.svg';
+    if(angularEditorConfig.imageProviderUrl && local == false){
+      angularEditorConfig.imageProviderUrl(imageUrl).subscribe(val => {
+        img.instance.src = val;
+        img.instance.safeSrc = this.sanitizer.bypassSecurityTrustUrl(val);
+      });
+    }else{
+      img.instance.src = imageUrl;
+    }    
     img.instance.config = config;
     imgContainer.appendChild((img.instance.elm.nativeElement as HTMLElement));
     return img;

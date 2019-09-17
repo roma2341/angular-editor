@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 export interface CustomClass {
   name: string;
   class: string;
@@ -26,7 +27,8 @@ export interface AngularEditorConfig {
   defaultFontSize?: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | string;
   uploadUrl?: string;
   fonts?: Font[];
-  customClasses?: CustomClass[];
+  customClasses?: CustomClass[],
+  imageProviderUrl: (base64: string) => Observable<string>;
 }
 
 export const angularEditorConfig: AngularEditorConfig = {
@@ -51,4 +53,5 @@ export const angularEditorConfig: AngularEditorConfig = {
     {class: 'comic-sans-ms', name: 'Comic Sans MS'}
   ],
   uploadUrl: null,
+  imageProviderUrl: null
 };

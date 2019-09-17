@@ -2,8 +2,7 @@ import { Component, ElementRef, EventEmitter, Inject, Output, Renderer2, ViewChi
 import { AngularEditorService } from './angular-editor.service';
 import { HttpResponse } from '@angular/common/http';
 import { DOCUMENT } from '@angular/common';
-import { CustomClass, Font } from './config';
-import { AngularEditorComponent } from '../public-api';
+import { CustomClass, Font, AngularEditorConfig, angularEditorConfig } from './config';
 
 @Component({
   selector: 'angular-editor-toolbar',
@@ -25,6 +24,9 @@ export class AngularEditorToolbarComponent {
   customClassId = -1;
   customClasses: CustomClass[];
   uploadUrl: string;
+
+  @Input() 
+  config: AngularEditorConfig = angularEditorConfig;
 
   tagMap = {
     BLOCKQUOTE: 'indent',
@@ -206,7 +208,7 @@ export class AngularEditorToolbarComponent {
         if (this.uploadUrl) {
           this.editorService.uploadImage(file).subscribe(e => {
             if (e instanceof HttpResponse) {
-              const img = this.editorService.insertImage(e.body.imageUrl, this.vcRef, this.textArea.nativeElement);
+              const img = this.editorService.insertImage(this.config, false, e.body.imageUrl, this.vcRef, this.textArea.nativeElement);
               img.instance.resizeEnd.subscribe(() => this.update.emit());
               img.instance.ready.subscribe(() => this.update.emit());
               this.fileReset();
@@ -215,7 +217,7 @@ export class AngularEditorToolbarComponent {
         } else {
           const reader = new FileReader();
           reader.onload = (_event) => {
-            const img = this.editorService.insertImage(_event.target['result'], this.vcRef, this.textArea.nativeElement);
+            const img = this.editorService.insertImage(this.config, false, _event.target['result'], this.vcRef, this.textArea.nativeElement);
             img.instance.resizeEnd.subscribe(() => this.update.emit());
             img.instance.ready.subscribe(() => this.update.emit());
           };

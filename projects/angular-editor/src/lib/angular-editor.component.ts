@@ -68,6 +68,8 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     this.editorToolbar.customClasses = this.config.customClasses;
     this.editorToolbar.textArea = this.textArea;
     this.editorToolbar.uploadUrl = this.config.uploadUrl;
+    this.editorToolbar.config = this.config;
+
     this.editorService.uploadUrl = this.config.uploadUrl;
     if (this.config.showToolbar !== undefined) {
       this.editorToolbar.showToolbar = this.config.showToolbar;
@@ -156,7 +158,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
             reader.onloadend = () => {
               const area = this.textArea.nativeElement as HTMLElement;
               var source = reader.result as string;
-              const img = this.editorService.insertImage(source, this.vcRef, area);
+              const img = this.editorService.insertImage(this.config, false, source, this.vcRef, area);
               img.instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
               img.instance.ready.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
             }
@@ -258,7 +260,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
         range.selectNode(item);
         selection.addRange(range);
         this.editorService
-          .insertImage(item.getAttribute('src'), this.vcRef, area, { width: item.width, height: item.height, resizable: true })
+          .insertImage(this.config, true, item.getAttribute('src'), this.vcRef, area, { width: item.width, height: item.height, resizable: true })
           .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
       }
     })
