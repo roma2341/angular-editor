@@ -4,6 +4,7 @@ import { Injectable, Renderer2, ComponentFactoryResolver, RendererFactory2, Inje
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CustomClass } from './config';
+import { DOCUMENT } from '@angular/common';
 
 export interface UploadResponse {
   imageUrl: string;
@@ -21,7 +22,7 @@ export class AngularEditorService {
   constructor(
     private http: HttpClient,
     private componentFactoryResolver: ComponentFactoryResolver, rendererFactory: RendererFactory2,
-    @Inject(Document) private doc: any
+    @Inject(DOCUMENT) private doc: any
   ) {
     this._renderer = rendererFactory.createRenderer(null, null);
    }
@@ -139,7 +140,7 @@ export class AngularEditorService {
   /**
    * setTimeout used for execute 'saveSelection' method in next event loop iteration
    */
-  public executeInNextQueueIteration(callbackFn: (...args: any) => any, timeout = 1e2): void {
+  public executeInNextQueueIteration(callbackFn: (...args: any[]) => any, timeout = 1e2): void {
     setTimeout(callbackFn, timeout);
   }
 
@@ -263,7 +264,7 @@ export class AngularEditorService {
     const thumbnail = `
       <div style='position: relative'>
         <img style='position: absolute; left:200px; top:140px'
-             src="https://img.icons8.com/color/96/000000/youtube-play.png"
+             src="https://img.icons8.com/color/96/000000/youtube-play.png"/>
         <a href='${videoUrl}' target='_blank'>
           <img src="${imageUrl}" alt="click to watch"/>
         </a>

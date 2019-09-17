@@ -55,50 +55,27 @@
         class='material-icons'>format_list_numbered</i></button>
   </div>
   <div class="angular-editor-toolbar-set">
-    <label [for]="'heading-'+id" class="block-label" tabindex="-1"></label>
-    <select title="Formatting" [id]="'heading-'+id" class="select-heading" [(ngModel)]="block"
-      (change)="triggerCommand(block)" [disabled]="htmlMode" tabindex="-1">
-      <optgroup label="Formatting"></optgroup>
-      <option class="h1" value="h1">Heading 1</option>
-      <option class="h2" value="h2">Heading 2</option>
-      <option class="h3" value="h3">Heading 3</option>
-      <option class="h4" value="h4">Heading 4</option>
-      <option class="h5" value="h5">Heading 5</option>
-      <option class="h6" value="h6">Heading 6</option>
-      <option class="p" value="p">Paragraph</option>
-      <option class="pre" value="pre">Predefined</option>
-      <option class="div" value="div">Standard</option>
-      <option class="default" value="default">Default</option>
-    </select>
+  <ae-select class="select-heading" [options]="headings"
+               [(ngModel)]="block"
+               (change)="triggerCommand(block)"
+               [disabled]="htmlMode"
+               tabindex="-1"></ae-select>
   </div>
   <div class="angular-editor-toolbar-set">
-    <label [for]="'fontSelector-'+id" class="block-label"></label>
-    <select title="Font Name" [id]="'fontSelector-'+id" class="select-font" [(ngModel)]="fontId"
-      (change)="setFontName(fontId)" [disabled]="htmlMode" tabindex="-1">
-      <optgroup label="Font Name"></optgroup>
-      <option *ngFor="let item of fonts; let i = index" [class]="item.class" [value]="i">{{item.name}}</option>
-      <!-- <option class="arial" value="Arial">Arial</option>
-      <option class="calibri" value="Calibri">Calibri</option>
-      <option class="comic-sans-ms" value="Comic Sans MS">Comic Sans MS</option>
-      <option class="times-new-roman" value="Times New Roman">Times New Roman</option>-->
-    </select>
+
+    <ae-select class="select-font" [options]="fonts"
+               [(ngModel)]="fontName"
+               (change)="setFontName(fontName)"
+               [disabled]="htmlMode"
+               tabindex="-1"></ae-select>
   </div>
   <div class="angular-editor-toolbar-set">
-    <label [for]="'fontSizeSelector-'+id" class="block-label"></label>
-    <select title="Font Size" [id]="'fontSizeSelector-'+id" class="select-font-size" [(ngModel)]="fontSize"
-      (change)="setFontSize(fontSize)" [disabled]="htmlMode" tabindex="-1">
-      <optgroup label="Font Sizing"></optgroup>
-      <option class="size1" value="1">1</option>
-      <option class="size2" value="2">2</option>
-      <option class="size3" value="3">3</option>
-      <option class="size4" value="4">4</option>
-      <option class="size5" value="5">5</option>
-      <option class="size6" value="6">6</option>
-      <option class="size7" value="7">7</option>
-      <option class="size8" value="8">8</option>
-      <option class="size9" value="9">9</option>
-      <option class="size10" value="10">10</option>
-    </select>
+    <ae-select class="select-font-size" [options]="fontSizes"
+               [(ngModel)]="fontSize"
+               (change)="setFontSize(fontSize)"
+               [disabled]="htmlMode"
+               tabindex="-1">
+    </ae-select>
   </div>
   <div class="angular-editor-toolbar-set">
     <input style="display: none" type="color" (change)="insertColor(fgInput.value, 'textColor')" #fgInput>
@@ -110,14 +87,12 @@
       title="Background Color" [disabled]="htmlMode" tabindex="-1"><span class="color-label background"><i
           class="material-icons">font_download</i></span></button>
   </div>
-  <div *ngIf="customClasses" class="angular-editor-toolbar-set">
-    <label [for]="'customClassSelector-'+id" class="block-label"></label>
-    <select title="Custom Style" [id]="'customClassSelector-'+id" class="select-custom-style"
-      [(ngModel)]="customClassId" (change)="setCustomClass(customClassId)" [disabled]="htmlMode" tabindex="-1">
-      <optgroup label="Custom Class"></optgroup>
-      <option class="" value=-1>Clear Class</option>
-      <option *ngFor="let item of customClasses; let i = index" [class]="item.class" [value]="i">{{item.name}}</option>
-    </select>
+  <div *ngIf="_customClasses" class="angular-editor-toolbar-set">
+    <ae-select class="select-custom-style" [options]="customClassList"
+               [(ngModel)]="customClassId"
+               (change)="setCustomClass(customClassId)"
+               [disabled]="htmlMode"
+               tabindex="-1"></ae-select>
   </div>
   <div class="angular-editor-toolbar-set">
     <button [id]="'link-'+id" type="button" class="angular-editor-button" (click)="insertUrl()" title="Insert Link"

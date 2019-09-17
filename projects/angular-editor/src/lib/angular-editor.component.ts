@@ -48,6 +48,8 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   showPlaceholder = false;
   disabled = false;
   focused = false;
+  touched = false;
+  changed = false;
 
   focusInstance: any;
   blurInstance: any;
@@ -73,9 +75,10 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @Output() html;
 
-  @ViewChild('editor', { static: true }) textArea: ElementRef;
-  @ViewChild('editorWrapper', { static: true }) editorWrapper: ElementRef;
-  @ViewChild('editorToolbar', { static: true }) editorToolbar: AngularEditorToolbarComponent;
+  @ViewChild('editor', {static: true}) textArea: ElementRef;
+  @ViewChild('editorWrapper', {static: true}) editorWrapper: ElementRef;
+  @ViewChild('editorToolbar', {static: false}) editorToolbar: AngularEditorToolbarComponent;
+
 
   @Output() viewMode = new EventEmitter<boolean>();
 
@@ -104,7 +107,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     private sanitizer: DomSanitizer,
     private cdRef: ChangeDetectorRef,
     @Attribute('tabindex') defaultTabIndex: string,
-    @Attribute('autofocus') private autoFocus: any,
+    @Attribute('autofocus') private autoFocus: any
   ) {
     const parsedTabIndex = Number(defaultTabIndex);
     this.tabIndex = (parsedTabIndex || parsedTabIndex === 0) ? parsedTabIndex : null;
@@ -112,18 +115,12 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   ngOnInit() {
     this.config.toolbarPosition = this.config.toolbarPosition ? this.config.toolbarPosition : angularEditorConfig.toolbarPosition;
-    if (this.config.defaultParagraphSeparator) {
-      this.editorService.setDefaultParagraphSeparator(this.config.defaultParagraphSeparator);
-    }
-
   }
 
   ngAfterViewInit() {
     if (isDefined(this.autoFocus)) {
       this.focus();
     }
-    this.configure();
-    this.cdRef.detectChanges();
   }
 
   /**
@@ -158,6 +155,12 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     }
     this.focused = true;
     this.focusEvent.emit(event);
+    if (!this.touched || !this.changed) {
+      this.editorService.executeInNextQueueIteration(() => {
+        this.configure();
+        this.touched = true;
+      });
+    }
   }
 
   /**
@@ -180,9 +183,12 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       this.onTouched();
     }
 
-    if (event.relatedTarget != null && (event.relatedTarget as HTMLElement).parentElement.className !== 'angular-editor-toolbar-set') {
-      this.blurEvent.emit(event);
-      this.focused = false;
+    if (event.relatedTarget !== null) {
+      const parent = (event.relatedTarget as HTMLElement).parentElement;
+      if (!parent.classList.contains('angular-editor-toolbar-set') && !parent.classList.contains('ae-picker')) {
+        this.blurEvent.emit(event);
+        this.focused = false;
+      }
     }
   }
 
@@ -247,6 +253,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       }
       this.initImageResizers();
     }
+    this.changed = true;
   }
 
   /**
@@ -256,7 +263,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
    * @param fn a function
    */
   registerOnChange(fn: any): void {
-    this.onChange = fn;
+    this.onChange = e => (e === '<br>' ? fn('') : fn(e)) ;
   }
 
   /**
@@ -371,7 +378,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       this.r.setStyle(oCode, 'background-color', '#fff5b9');
       this.r.setProperty(oCode, 'contentEditable', true);
       this.r.appendChild(oCode, oContent);
-      this.focusInstance = this.r.listen(oCode, 'focus', () => this.onTextAreaFocus(null));
+      this.focusInstance = this.r.listen(oCode, 'focus', (event) => this.onTextAreaFocus(event));
       this.blurInstance = this.r.listen(oCode, 'blur', (event) => this.onTextAreaBlur(event));
       this.r.appendChild(oPre, oCode);
       this.r.appendChild(editableElement, oPre);
@@ -423,24 +430,23 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   }
 
   private configure() {
-    this.editorToolbar.id = this.id;
-    if (this.config.showToolbar !== undefined) {
-      this.editorToolbar.showToolbar = this.config.showToolbar;
-    }
-    this.editorToolbar.fonts = this.config.fonts ? this.config.fonts : angularEditorConfig.fonts;
-    this.editorToolbar.customClasses = this.config.customClasses;
-    this.editorToolbar.uploadUrl = this.config.uploadUrl;
     this.editorService.uploadUrl = this.config.uploadUrl;
+    if (this.config.defaultParagraphSeparator) {
+      this.editorService.setDefaultParagraphSeparator(this.config.defaultParagraphSeparator);
+    }
     if (this.config.defaultFontName) {
-      this.editorToolbar.fontName = this.config.defaultFontName;
       this.editorService.setFontName(this.config.defaultFontName);
-    } else {
-      this.editorToolbar.fontName = 'Times New Roman';
     }
     if (this.config.defaultFontSize) {
-      this.editorToolbar.fontSize = this.config.defaultFontSize;
       this.editorService.setFontSize(this.config.defaultFontSize);
     }
+  }
+
+  getFonts() {
+    const fonts = this.config.fonts ? this.config.fonts : angularEditorConfig.fonts;
+    return fonts.map(x => {
+      return {label: x.name, value: x.name};
+    });
   }
 
   getCustomTags() {
