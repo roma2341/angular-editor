@@ -1,6 +1,6 @@
 <div class="angular-editor" #angularEditor [style.width]="config.width"
      [style.minWidth]="config.minWidth">
-<angular-editor-toolbar *ngIf="config.toolbarPosition === 'top'" #editorToolbar
+<angular-editor-toolbar #editorToolbar
                           [id]="id"
                           [uploadUrl]="config.uploadUrl"
                           [showToolbar]="config.showToolbar !== undefined ? config.showToolbar : true"
@@ -10,6 +10,7 @@
                           [defaultFontSize]="config.defaultFontSize"
                           (execute)="executeCommand($event)"
                           (update)="onContentChange(editor.innerHTML)"
+                          [textArea]="editor"
                           (fileAdded)="fileAdded.emit($event)"></angular-editor-toolbar>
   <div class="angular-editor-wrapper" #editorWrapper>
     <div #editor class="angular-editor-textarea"
@@ -32,13 +33,4 @@
     </div>
     <span class="angular-editor-placeholder">{{ placeholder || config['placeholder'] }}</span>
   </div>
-  <angular-editor-toolbar *ngIf="config.toolbarPosition === 'bottom'" #editorToolbar
-                          [id]="id"
-                          [uploadUrl]="config.uploadUrl"
-                          [showToolbar]="config.showToolbar !== undefined ? config.showToolbar : true"
-                          [fonts]="getFonts()"
-                          [customClasses]="config.customClasses"
-                          [defaultFontName]="config.defaultFontName"
-                          [defaultFontSize]="config.defaultFontSize"
-                          (execute)="executeCommand($event)"></angular-editor-toolbar>
 </div>

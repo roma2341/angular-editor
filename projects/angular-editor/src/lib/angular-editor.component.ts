@@ -77,7 +77,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @ViewChild('editor', {static: true}) textArea: ElementRef;
   @ViewChild('editorWrapper', {static: true}) editorWrapper: ElementRef;
-  @ViewChild('editorToolbar', {static: false}) editorToolbar: AngularEditorToolbarComponent;
+  @ViewChild('editorToolbar', {static: true}) editorToolbar: AngularEditorToolbarComponent;
 
 
   @Output() viewMode = new EventEmitter<boolean>();
@@ -97,6 +97,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     this.focus();
   }
 
+
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
   constructor(
@@ -115,6 +116,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   ngOnInit() {
     this.config.toolbarPosition = this.config.toolbarPosition ? this.config.toolbarPosition : angularEditorConfig.toolbarPosition;
+    this.editorToolbar.config = this.config;
   }
 
   ngAfterViewInit() {
@@ -207,7 +209,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
             reader.onloadend = () => {
               const area = this.textArea.nativeElement as HTMLElement;
               var source = reader.result as string;
-              const img = this.editorService.insertImage(source, this.vcRef, area);
+              const img = this.editorService.insertImage(this.config, false, source, this.vcRef, area);
               img.instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
               img.instance.ready.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
             }
@@ -316,7 +318,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
         range.selectNode(item);
         selection.addRange(range);
         this.editorService
-          .insertImage(item.getAttribute('src'), this.vcRef, area, { width: item.width, height: item.height, resizable: true })
+          .insertImage(this.config, true, item.getAttribute('src'), this.vcRef, area, { width: item.width, height: item.height, resizable: true })
           .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
       }
     })

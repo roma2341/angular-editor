@@ -3,8 +3,10 @@ import { EditorResizableImgComponent, EditorResizableImgConfig } from './compone
 import { Injectable, Renderer2, ComponentFactoryResolver, RendererFactory2, Inject, ViewContainerRef, ComponentRef, ComponentFactory } from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CustomClass } from './config';
+import { CustomClass, AngularEditorConfig } from './config';
 import { DOCUMENT } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
+
 
 export interface UploadResponse {
   imageUrl: string;
@@ -21,7 +23,7 @@ export class AngularEditorService {
 
   constructor(
     private http: HttpClient,
-    private componentFactoryResolver: ComponentFactoryResolver, rendererFactory: RendererFactory2,
+    private componentFactoryResolver: ComponentFactoryResolver, rendererFactory: RendererFactory2, protected sanitizer: DomSanitizer,
     @Inject(DOCUMENT) private doc: any
   ) {
     this._renderer = rendererFactory.createRenderer(null, null);
@@ -223,14 +225,20 @@ export class AngularEditorService {
    * Insert image with Url
    * @param imageUrl The imageUrl.
    */
-
-  insertImage(imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
+  insertImage(angularEditorConfig: AngularEditorConfig, local: boolean, imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
     const factory: ComponentFactory<EditorResizableImgComponent> = this.componentFactoryResolver.resolveComponentFactory(EditorResizableImgComponent);
     const imgContainer = this._renderer.createElement('span') as HTMLElement;
     this.replaceSelectedText(imgContainer, textArea);
     const img = vcRef.createComponent(factory);
-    vcRef.element.nativeElement
-    img.instance.src = imageUrl;
+    img.instance.src = 'https://loading.io/spinners/camera/index.svg';
+    if(angularEditorConfig.imageProviderUrl && local == false){
+      angularEditorConfig.imageProviderUrl(imageUrl).subscribe(val => {
+        img.instance.src = val;
+        img.instance.safeSrc = this.sanitizer.bypassSecurityTrustUrl(val);
+      });
+    }else{
+      img.instance.src = imageUrl;
+    }    
     img.instance.config = config;
     imgContainer.appendChild((img.instance.elm.nativeElement as HTMLElement));
     return img;

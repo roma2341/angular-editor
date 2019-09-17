@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 export interface CustomClass {
   name: string;
   class: string;
@@ -30,6 +31,7 @@ export interface AngularEditorConfig {
   sanitize?: boolean;
   toolbarPosition?: 'top' | 'bottom';
   outline?: boolean;
+  imageProviderUrl: (base64: string) => Observable<string>;
 }
 
 export const angularEditorConfig: AngularEditorConfig = {
@@ -57,4 +59,5 @@ export const angularEditorConfig: AngularEditorConfig = {
   sanitize: true,
   toolbarPosition: 'top',
   outline: true,
+  imageProviderUrl: null
 };

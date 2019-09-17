@@ -42,7 +42,8 @@ export class AppComponent implements OnInit {
         class: 'titleText',
         tag: 'h1',
       },
-    ]
+    ],
+    imageProviderUrl: null
   };
 
   config2: AngularEditorConfig = {
@@ -70,7 +71,8 @@ export class AppComponent implements OnInit {
         class: 'titleText',
         tag: 'h1',
       },
-    ]
+    ],
+    imageProviderUrl: null
   };
 
   constructor(private formBuilder: FormBuilder) {}

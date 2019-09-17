@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, Inject, Input, Output, Renderer2, V
 import {AngularEditorService} from './angular-editor.service';
 import {HttpResponse} from '@angular/common/http';
 import {DOCUMENT} from '@angular/common';
-import {CustomClass} from './config';
+import {CustomClass, AngularEditorConfig, angularEditorConfig} from './config';
 import {SelectOption} from './ae-select/ae-select.component';
 
 
@@ -111,6 +111,9 @@ export class AngularEditorToolbarComponent {
   _customClasses: CustomClass[];
   customClassList: SelectOption[] = [{label: '', value: ''}];
 
+  @Input() 
+  config: AngularEditorConfig = angularEditorConfig;
+
   tagMap = {
     BLOCKQUOTE: 'indent',
     A: 'link'
@@ -154,7 +157,7 @@ export class AngularEditorToolbarComponent {
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
 
   @Input()
-  textArea: ElementRef;
+  textArea: HTMLElement;
 
   @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
 
@@ -322,13 +325,12 @@ export class AngularEditorToolbarComponent {
    */
   onFileChanged(event, blobInsert: boolean) {
     if (blobInsert) {
-      const area = this.textArea.nativeElement as HTMLElement;
       const file = event.target.files[0];
       if (file.type.includes('image/')) {
         if (this.uploadUrl) {
           this.editorService.uploadImage(file).subscribe(e => {
             if (e instanceof HttpResponse) {
-              const img = this.editorService.insertImage(e.body.imageUrl, this.vcRef, this.textArea.nativeElement);
+              const img = this.editorService.insertImage(this.config, false, e.body.imageUrl, this.vcRef, this.textArea);
               img.instance.resizeEnd.subscribe(() => this.update.emit());
               img.instance.ready.subscribe(() => this.update.emit());
               this.fileReset();
@@ -337,7 +339,7 @@ export class AngularEditorToolbarComponent {
         } else {
           const reader = new FileReader();
           reader.onload = (_event) => {
-            const img = this.editorService.insertImage(_event.target['result'], this.vcRef, this.textArea.nativeElement);
+            const img = this.editorService.insertImage(this.config, false, _event.target['result'], this.vcRef, this.textArea);
             img.instance.resizeEnd.subscribe(() => this.update.emit());
             img.instance.ready.subscribe(() => this.update.emit());
           };
