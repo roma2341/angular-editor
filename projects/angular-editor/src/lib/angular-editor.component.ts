@@ -77,7 +77,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @ViewChild('editor', { static: true }) textArea: ElementRef;
   @ViewChild('editorWrapper', { static: true }) editorWrapper: ElementRef;
-  @ViewChild('editorToolbar', { static: true }) editorToolbar: AngularEditorToolbarComponent;
+  @ViewChild('editorToolbar', { static: false }) editorToolbar: AngularEditorToolbarComponent;
 
 
   @Output() viewMode = new EventEmitter<boolean>();
@@ -116,10 +116,10 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   ngOnInit() {
     this.config.toolbarPosition = this.config.toolbarPosition ? this.config.toolbarPosition : angularEditorConfig.toolbarPosition;
-    this.editorToolbar.config = this.config;
   }
 
   ngAfterViewInit() {
+    this.editorToolbar.config = this.config;
     if (isDefined(this.autoFocus)) {
       this.focus();
     }
@@ -235,10 +235,9 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   /**
    * Executed from the contenteditable section while the input property changes
-   * @param html html string from contenteditable
+   * @param element html element from contenteditable
    */
   onContentChange(html: string): void {
-    this.observer.disconnect();
     if ((!html || html === '<br>')) {
       html = '';
     }
@@ -481,5 +480,10 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     if (this.focusInstance) {
       this.focusInstance();
     }
+  }
+
+  filterStyles(html: string): string {
+    html = html.replace('position: fixed;', '');
+    return html;
   }
 }

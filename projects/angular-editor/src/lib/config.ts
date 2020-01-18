@@ -24,7 +24,7 @@ export interface AngularEditorConfig {
   placeholder?: string;
   defaultParagraphSeparator?: string;
   defaultFontName?: string;
-  defaultFontSize?: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | string;
+  defaultFontSize?: '1' | '2' | '3' | '4' | '5' | '6' | '7' | string;
   uploadUrl?: string;
   fonts?: Font[];
   customClasses?: CustomClass[];
@@ -32,6 +32,7 @@ export interface AngularEditorConfig {
   toolbarPosition?: 'top' | 'bottom';
   outline?: boolean;
   imageProviderUrl?: (base64: string) => Observable<string>;
+  toolbarHiddenButtons?: string[][];
 }
 
 export const angularEditorConfig: AngularEditorConfig = {
@@ -60,4 +61,12 @@ export const angularEditorConfig: AngularEditorConfig = {
   toolbarPosition: 'top',
   outline: true,
   imageProviderUrl: null
+  /*toolbarHiddenButtons: [
+    ['bold', 'italic', 'underline', 'strikeThrough', 'superscript', 'subscript'],
+    ['heading', 'fontName', 'fontSize', 'color'],
+    ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull', 'indent', 'outdent'],
+    ['cut', 'copy', 'delete', 'removeFormat', 'undo', 'redo'],
+    ['paragraph', 'blockquote', 'removeBlockquote', 'horizontalLine', 'orderedList', 'unorderedList'],
+    ['link', 'unlink', 'image', 'video']
+  ]*/
 };

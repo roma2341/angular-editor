@@ -28,6 +28,7 @@ export class AppComponent implements OnInit {
     defaultFontName: 'Comic Sans MS',
     defaultFontSize: '5',
     // showToolbar: false,
+    defaultParagraphSeparator: 'p',
     customClasses: [
       {
         name: 'quote',
@@ -43,7 +44,11 @@ export class AppComponent implements OnInit {
         tag: 'h1',
       },
     ],
-    imageProviderUrl: null
+    imageProviderUrl: null,
+    toolbarHiddenButtons: [
+      ['bold', 'italic'],
+      ['fontSize']
+    ]
   };
 
   config2: AngularEditorConfig = {
@@ -57,6 +62,7 @@ export class AppComponent implements OnInit {
     toolbarPosition: 'bottom',
     defaultFontName: 'Comic Sans MS',
     defaultFontSize: '5',
+    defaultParagraphSeparator: 'p',
     customClasses: [
       {
         name: 'quote',

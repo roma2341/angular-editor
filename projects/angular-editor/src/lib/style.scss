@@ -28,20 +28,16 @@ a {
   border: 1px solid #ddd;
 
   .angular-editor-toolbar-set {
-    display: inline-block;
-    border-radius: 5px;
-    background-color: white;
+    display: none;
     margin-right: 5px;
-    vertical-align: middle;
-    border: 1px solid #ddd;
-    margin-bottom: 3px;
-    height: 35px;
-
+    vertical-align: baseline;
     .angular-editor-button {
-      background-color: transparent;
+      background-color: white;
+      vertical-align: middle;
+      border: 1px solid #ddd;
+      padding: 0.4rem;
       min-width: 2.0rem;
       float: left;
-      border: 0 solid #ddd;
 
       .material-icons {
         font-size: 24px;
@@ -49,15 +45,15 @@ a {
       }
 
       &:first-child {
-        border-radius: 5px 0 0 5px;
+        //border-radius: 5px 0 0 5px;
       }
 
       &:last-child {
-        border-radius: 0 5px 5px 0;
+        //border-radius: 0 5px 5px 0;
       }
 
       &:first-child:last-child {
-        border-radius: 5px;
+        //border-radius: 5px;
       }
 
       &:hover {
@@ -216,7 +212,7 @@ a {
       width: 50px;
       height: 24px;
 
-      @supports not(-moz-appearance:none) {
+      @supports not( -moz-appearance:none ) {
         optgroup {
           font-size: 12px;
           background-color: #f4f4f4;
@@ -275,7 +271,7 @@ a {
       width: 90px;
       height: 24px;
 
-      @supports not(-moz-appearance:none) {
+      @supports not( -moz-appearance:none ) {
         optgroup {
           font-size: 12px;
           background-color: #f4f4f4;
@@ -327,5 +323,8 @@ a {
       position: relative;
       cursor: pointer;
     }
+  }
+  .angular-editor-toolbar-set:not([style*="display:none"]):not([style*="display: none"]){
+    display: inline-block;
   }
 }

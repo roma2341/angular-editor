@@ -13,9 +13,7 @@ import { SelectOption } from './ae-select/ae-select.component';
 })
 
 export class AngularEditorToolbarComponent {
-  // id = '';
   htmlMode = false;
-  // showToolbar = true;
   linkSelected = false;
   block = 'default';
   fontName = 'Times New Roman';
@@ -57,10 +55,6 @@ export class AngularEditorToolbarComponent {
       value: 'p',
     },
     {
-      label: 'Heading 7',
-      value: 'h7',
-    },
-    {
       label: 'Predefined',
       value: 'pre'
     },
@@ -74,7 +68,6 @@ export class AngularEditorToolbarComponent {
     }
   ];
 
-  // fonts: SelectOption[] = [{label: '', value: ''}];
   fontSizes: SelectOption[] = [
     {
       label: '1',
@@ -152,6 +145,8 @@ export class AngularEditorToolbarComponent {
     }
   }
 
+  @Input() hiddenButtons: string[][];
+
   @Output() execute: EventEmitter<string> = new EventEmitter<string>();
   @Output() update: EventEmitter<void> = new EventEmitter<void>();
   @Output() fileAdded: EventEmitter<Event> = new EventEmitter<Event>();
@@ -189,10 +184,12 @@ export class AngularEditorToolbarComponent {
     this.buttons.forEach(e => {
       const result = this.doc.queryCommandState(e);
       const elementById = this.doc.getElementById(e + '-' + this.id);
-      if (result) {
-        this.r.addClass(elementById, 'active');
-      } else {
-        this.r.removeClass(elementById, 'active');
+      if(elementById){
+        if (result) {
+          this.r.addClass(elementById, 'active');
+        } else {
+          this.r.removeClass(elementById, 'active');
+        }
       }
     });
   }
@@ -368,5 +365,24 @@ export class AngularEditorToolbarComponent {
     } else {
       this.editorService.createCustomClass(this._customClasses[+classId]);
     }
+  }
+
+  isButtonHidden(name: string): boolean {
+    if (!name) {
+      return false;
+    }
+    if (!(this.hiddenButtons instanceof Array)) {
+      return false;
+    }
+    let result: any;
+    for (const arr of this.hiddenButtons) {
+      if (arr instanceof Array) {
+        result = arr.find(item => item === name);
+      }
+      if (result) {
+        break;
+      }
+    }
+    return result !== undefined;
   }
 }
