@@ -6,6 +6,7 @@
     width: 100%;
     position: relative;
     vertical-align: middle;
+    height: 36px;
   }
   .ae-picker-label {
     cursor: pointer;
@@ -97,10 +98,11 @@
         background-color: #fff4c2;
       }
       &.focused {
-        background-color: #fffa98;
+        background-color: #fff;
       }
       &:hover {
-        background-color: #fffa98;
+        color: #06c;
+        background-color: #fff;
       }
     }
   }
