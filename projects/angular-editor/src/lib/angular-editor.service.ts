@@ -1,12 +1,17 @@
 
 import { EditorResizableImgComponent, EditorResizableImgConfig } from './components/editor-img/editor-img.component';
-import { Injectable, Renderer2, ComponentFactoryResolver, RendererFactory2, Inject, ViewContainerRef, ComponentRef, ComponentFactory } from '@angular/core';
+import {
+  Injectable, Renderer2, ComponentFactoryResolver, RendererFactory2,
+  Inject, ViewContainerRef, ComponentRef, ComponentFactory
+} from '@angular/core';
 import { HttpClient, HttpEvent } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CustomClass, AngularEditorConfig } from './config';
 import { DOCUMENT } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 
+// tslint:disable-next-line: max-line-length
+const PRELODER_IMAGE = 'data:image/svg+xml;base64,PHN2ZyBjbGFzcz0ibGRzLWNhbWVyYSIgd2lkdGg9IjgwcHgiICBoZWlnaHQ9IjgwcHgiICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJ4TWlkWU1pZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTAsNTApIj4KPGcgdHJhbnNmb3JtPSJzY2FsZSgwLjcpIj4KPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTUwLC01MCkiPgo8ZyB0cmFuc2Zvcm09InJvdGF0ZSgyNzAuNzIgNTAgNTApIj4KICA8YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InJvdGF0ZSIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiIHZhbHVlcz0iMzYwIDUwIDUwOzAgNTAgNTAiIGtleVRpbWVzPSIwOzEiIGR1cj0iMXMiIGtleVNwbGluZXM9IjAuNSAwLjUgMC41IDAuNSIgY2FsY01vZGU9InNwbGluZSI+PC9hbmltYXRlVHJhbnNmb3JtPgogIDxwYXRoIGZpbGw9IiNmMDUxMjUiIGQ9Ik01NC4zLDI4LjFoMzQuMmMtNC41LTkuMy0xMi40LTE2LjctMjEuOS0yMC44TDQ1LjcsMjguMUw1NC4zLDI4LjFMNTQuMywyOC4xeiI+PC9wYXRoPgogIDxwYXRoIGZpbGw9IiNmZGI4MTMiIGQ9Ik02MS43LDcuM0M1MS45LDQsNDEuMSw0LjIsMzEuNSw4LjF2MjkuNWw2LjEtNi4xTDYxLjcsNy4zQzYxLjcsNy4zLDYxLjcsNy4zLDYxLjcsNy4zeiI+PC9wYXRoPgogIDxwYXRoIGZpbGw9IiM3ZmJiNDIiIGQ9Ik0yOC4xLDExLjZjLTkuMyw0LjUtMTYuNywxMi40LTIwLjgsMjEuOWwyMC44LDIwLjh2LTguNkwyOC4xLDExLjZDMjguMSwxMS42LDI4LjEsMTEuNiwyOC4xLDExLjZ6Ij48L3BhdGg+CiAgPHBhdGggZmlsbD0iIzMyYTBkYSIgZD0iTTMxLjUsNjIuNEw3LjMsMzguM2MwLDAsMCwwLDAsMEM0LDQ4LjEsNC4yLDU4LjksOC4xLDY4LjVoMjkuNUwzMS41LDYyLjR6Ij48L3BhdGg+CiAgPHBhdGggZmlsbD0iI2YwNTEyNSIgZD0iTTQ1LjcsNzEuOUgxMS41YzAsMCwwLDAsMCwwYzQuNSw5LjMsMTIuNCwxNi43LDIxLjksMjAuOGwyMC44LTIwLjhINDUuN3oiPjwvcGF0aD4KICA8cGF0aCBmaWxsPSIjZmRiODEzIiBkPSJNNjIuNCw2OC41TDM4LjMsOTIuNmMwLDAsMCwwLDAsMGM5LjgsMy40LDIwLjYsMy4xLDMwLjItMC44VjYyLjRMNjIuNCw2OC41eiI+PC9wYXRoPgogIDxwYXRoIGZpbGw9IiM3ZmJiNDIiIGQ9Ik03MS45LDQ1Ljd2OC42djM0LjJjMCwwLDAsMCwwLDBjOS4zLTQuNSwxNi43LTEyLjQsMjAuOC0yMS45TDcxLjksNDUuN3oiPjwvcGF0aD4KICA8cGF0aCBmaWxsPSIjMzJhMGRhIiBkPSJNOTEuOSwzMS41QzkxLjksMzEuNSw5MS45LDMxLjUsOTEuOSwzMS41bC0yOS41LDBsMCwwbDYuMSw2LjFsMjQuMSwyNC4xYzAsMCwwLDAsMCwwIEM5Niw1MS45LDk1LjgsNDEuMSw5MS45LDMxLjV6Ij48L3BhdGg+CjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=';
 
 export interface UploadResponse {
   imageUrl: string;
@@ -27,7 +32,7 @@ export class AngularEditorService {
     @Inject(DOCUMENT) private doc: any
   ) {
     this._renderer = rendererFactory.createRenderer(null, null);
-   }
+  }
 
   /**
    * Executed command from editor header buttons exclude toggleEditorMode
@@ -175,17 +180,17 @@ export class AngularEditorService {
 
   placeCaretAtEnd(el: HTMLElement) {
     el.focus();
-    if (typeof window.getSelection != "undefined"
-      && typeof document.createRange != "undefined") {
-      var range = document.createRange();
+    if (typeof window.getSelection != 'undefined'
+      && typeof document.createRange != 'undefined') {
+      const range = document.createRange();
       range.selectNodeContents(el);
       range.collapse(false);
-      var sel = window.getSelection();
+      const sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
       return range;
-    } else if (typeof (document.body as any).createTextRange != "undefined") {
-      var textRange = (document.body as any).createTextRange();
+    } else if (typeof (document.body as any).createTextRange != 'undefined') {
+      const textRange = (document.body as any).createTextRange();
       textRange.moveToElementText(el);
       textRange.collapse(false);
       textRange.select();
@@ -227,20 +232,20 @@ export class AngularEditorService {
    */
   insertImage(angularEditorConfig: AngularEditorConfig, local: boolean, imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
     const factory: ComponentFactory<EditorResizableImgComponent> = this.componentFactoryResolver.resolveComponentFactory(EditorResizableImgComponent);
-    const imgContainer = this._renderer.createElement('span') as HTMLElement;
-    this.replaceSelectedText(imgContainer, textArea);
     const img = vcRef.createComponent(factory);
-    img.instance.src = 'https://loading.io/spinners/camera/index.svg';
-    if(angularEditorConfig.imageProviderUrl && local == false){
+    img.instance.src = PRELODER_IMAGE;
+    if (angularEditorConfig.imageProviderUrl && local == false) {
       angularEditorConfig.imageProviderUrl(imageUrl).subscribe(val => {
         img.instance.src = val;
         img.instance.safeSrc = this.sanitizer.bypassSecurityTrustUrl(val);
+        setTimeout(() => img.instance.resizeEnd.next(null), 0);
       });
-    }else{
+    } else {
       img.instance.src = imageUrl;
-    }    
+    }
     img.instance.config = config;
-    imgContainer.appendChild((img.instance.elm.nativeElement as HTMLElement));
+    this.replaceSelectedText((img.instance.elm.nativeElement as HTMLElement), textArea);
+    this.placeCaretAtEnd(textArea);
     return img;
   }
 
@@ -271,8 +276,6 @@ export class AngularEditorService {
     const imageUrl = `https://img.youtube.com/vi/${id}/0.jpg`;
     const thumbnail = `
       <div style='position: relative'>
-        <img style='position: absolute; left:200px; top:140px'
-             src="https://img.icons8.com/color/96/000000/youtube-play.png"/>
         <a href='${videoUrl}' target='_blank'>
           <img src="${imageUrl}" alt="click to watch"/>
         </a>
@@ -318,7 +321,7 @@ export class AngularEditorService {
     } else {
       // Iterate nodes until we hit the end container
       while (node && node !== endNode) {
-        rangeNodes.push( node = this.nextNode(node) );
+        rangeNodes.push(node = this.nextNode(node));
       }
 
       // Add partially selected nodes at the start of the range

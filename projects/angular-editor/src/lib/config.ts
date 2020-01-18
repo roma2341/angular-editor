@@ -31,7 +31,7 @@ export interface AngularEditorConfig {
   sanitize?: boolean;
   toolbarPosition?: 'top' | 'bottom';
   outline?: boolean;
-  imageProviderUrl: (base64: string) => Observable<string>;
+  imageProviderUrl?: (base64: string) => Observable<string>;
 }
 
 export const angularEditorConfig: AngularEditorConfig = {

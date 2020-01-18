@@ -1,9 +1,9 @@
-import {Component, ElementRef, EventEmitter, Inject, Input, Output, Renderer2, ViewChild, ViewContainerRef} from '@angular/core';
-import {AngularEditorService} from './angular-editor.service';
-import {HttpResponse} from '@angular/common/http';
-import {DOCUMENT} from '@angular/common';
-import {CustomClass, AngularEditorConfig, angularEditorConfig} from './config';
-import {SelectOption} from './ae-select/ae-select.component';
+import { Component, ElementRef, EventEmitter, Inject, Input, Output, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { AngularEditorService } from './angular-editor.service';
+import { HttpResponse } from '@angular/common/http';
+import { DOCUMENT } from '@angular/common';
+import { CustomClass, AngularEditorConfig, angularEditorConfig } from './config';
+import { SelectOption } from './ae-select/ae-select.component';
 
 
 @Component({
@@ -109,9 +109,9 @@ export class AngularEditorToolbarComponent {
   customClassId = '-1';
   // tslint:disable-next-line:variable-name
   _customClasses: CustomClass[];
-  customClassList: SelectOption[] = [{label: '', value: ''}];
+  customClassList: SelectOption[] = [{ label: '', value: '' }];
 
-  @Input() 
+  @Input()
   config: AngularEditorConfig = angularEditorConfig;
 
   tagMap = {
@@ -127,14 +127,14 @@ export class AngularEditorToolbarComponent {
   @Input() id: string;
   @Input() uploadUrl: string;
   @Input() showToolbar: boolean;
-  @Input() fonts: SelectOption[] = [{label: '', value: ''}];
+  @Input() fonts: SelectOption[] = [{ label: '', value: '' }];
 
   @Input()
   set customClasses(classes: CustomClass[]) {
     if (classes) {
       this._customClasses = classes;
-      this.customClassList = this._customClasses.map((x, i) => ({label: x.name, value: i.toString()}));
-      this.customClassList.unshift({label: 'Clear Class', value: '-1'});
+      this.customClassList = this._customClasses.map((x, i) => ({ label: x.name, value: i.toString() }));
+      this.customClassList.unshift({ label: 'Clear Class', value: '-1' });
     }
   }
 
@@ -330,7 +330,7 @@ export class AngularEditorToolbarComponent {
         if (this.uploadUrl) {
           this.editorService.uploadImage(file).subscribe(e => {
             if (e instanceof HttpResponse) {
-              const img = this.editorService.insertImage(this.config, false, e.body.imageUrl, this.vcRef, this.textArea);
+              const img = this.editorService.insertImage(this.config, false, e.body.imageUrl, this.vcRef, this.textArea, { width: 100, height: 100, resizable: true });
               img.instance.resizeEnd.subscribe(() => this.update.emit());
               img.instance.ready.subscribe(() => this.update.emit());
               this.fileReset();
@@ -339,7 +339,7 @@ export class AngularEditorToolbarComponent {
         } else {
           const reader = new FileReader();
           reader.onload = (_event) => {
-            const img = this.editorService.insertImage(this.config, false, _event.target['result'], this.vcRef, this.textArea);
+            const img = this.editorService.insertImage(this.config, false, _event.target['result'], this.vcRef, this.textArea, { width: 100, height: 100, resizable: true });
             img.instance.resizeEnd.subscribe(() => this.update.emit());
             img.instance.ready.subscribe(() => this.update.emit());
           };

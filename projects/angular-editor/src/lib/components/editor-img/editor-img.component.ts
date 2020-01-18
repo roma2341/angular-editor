@@ -42,7 +42,6 @@ export class EditorResizableImgComponent implements OnInit, OnChanges, OnDestroy
   ngOnInit() {
     this.applyConfig();
     this.safeSrc = this.sanitizer.bypassSecurityTrustUrl(this.src);
-    
   }
 
   ngAfterViewInit(): void {
@@ -52,8 +51,12 @@ export class EditorResizableImgComponent implements OnInit, OnChanges, OnDestroy
   applyConfig() {
     if (this.config) {
       const elm = this.img.nativeElement as HTMLElement;
-      elm.style.width = this.config.width ? this.config.width + 'px' : '100px';
-      elm.style.height = this.config.height ? this.config.height + 'px' : '100px';
+      if (this.config.width) {
+        elm.style.width = this.config.width + 'px';
+      }
+      if (this.config.height) {
+        elm.style.height = this.config.height + 'px';
+      }
     }
   }
 
@@ -61,7 +64,7 @@ export class EditorResizableImgComponent implements OnInit, OnChanges, OnDestroy
     const elm = this.img.nativeElement as HTMLElement;
     elm.style.width = event.rectangle.width + 'px';
     elm.style.height = event.rectangle.height + 'px';
-    this.resizeEnd.emit();
+    setTimeout(() => this.resizeEnd.emit());
   }
 
   ngOnChanges(changes: SimpleChanges): void {

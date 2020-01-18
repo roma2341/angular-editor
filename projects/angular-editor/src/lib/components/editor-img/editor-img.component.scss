@@ -11,8 +11,8 @@
 
 :host::ng-deep{
     img {
-        width: 100px;
-        height: 100px;
+        min-width: 10px;
+        min-height: 10px;
         box-sizing: border-box; // required for the enableGhostResize option to work
         object-fit: contain;
         user-drag: none;

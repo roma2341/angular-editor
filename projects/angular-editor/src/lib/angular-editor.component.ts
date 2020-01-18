@@ -18,13 +18,13 @@ import {
   ElementRef,
   ViewContainerRef
 } from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {AngularEditorConfig, angularEditorConfig} from './config';
-import {AngularEditorToolbarComponent} from './angular-editor-toolbar.component';
-import {AngularEditorService} from './angular-editor.service';
-import {DOCUMENT} from '@angular/common';
-import {DomSanitizer} from '@angular/platform-browser';
-import {isDefined} from './utils';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { AngularEditorConfig, angularEditorConfig } from './config';
+import { AngularEditorToolbarComponent } from './angular-editor-toolbar.component';
+import { AngularEditorService } from './angular-editor.service';
+import { DOCUMENT } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
+import { isDefined } from './utils';
 
 
 @Component({
@@ -75,19 +75,19 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @Output() html;
 
-  @ViewChild('editor', {static: true}) textArea: ElementRef;
-  @ViewChild('editorWrapper', {static: true}) editorWrapper: ElementRef;
-  @ViewChild('editorToolbar', {static: true}) editorToolbar: AngularEditorToolbarComponent;
+  @ViewChild('editor', { static: true }) textArea: ElementRef;
+  @ViewChild('editorWrapper', { static: true }) editorWrapper: ElementRef;
+  @ViewChild('editorToolbar', { static: true }) editorToolbar: AngularEditorToolbarComponent;
 
 
   @Output() viewMode = new EventEmitter<boolean>();
 
   /** emits `blur` event when focused out from the textarea */
-    // tslint:disable-next-line:no-output-native no-output-rename
+  // tslint:disable-next-line:no-output-native no-output-rename
   @Output('blur') blurEvent: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
 
   /** emits `focus` event when focused in to the textarea */
-    // tslint:disable-next-line:no-output-rename no-output-native
+  // tslint:disable-next-line:no-output-rename no-output-native
   @Output('focus') focusEvent: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
 
   @HostBinding('attr.tabindex') tabindex = -1;
@@ -194,7 +194,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     }
   }
 
-  onPast(e: ClipboardEvent) {
+  onPaste(e: ClipboardEvent) {
     if (e.clipboardData) {
       // Get the items from the clipboard
       var items = e.clipboardData.items;
@@ -209,14 +209,13 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
             reader.onloadend = () => {
               const area = this.textArea.nativeElement as HTMLElement;
               var source = reader.result as string;
-              const img = this.editorService.insertImage(this.config, false, source, this.vcRef, area);
+              const img = this.editorService.insertImage(this.config, false, source, this.vcRef, area, { width: 100, height: 100, resizable: true });
               img.instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
-              img.instance.ready.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+              this.onContentChange(this.textArea.nativeElement.innerHTML);
+              this.cdRef.markForCheck();
             }
-
           }
         }
-
       }
     }
   }
@@ -244,18 +243,21 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       html = '';
     }
     if (typeof this.onChange === 'function') {
-      const regex = /<editor-img .+(<img .+>)<\/editor-img>/gm;
-      this.onChange(html.replace(regex, (value, img) => {
+      const regex = /<editor-img\b[^>]*>(.*?)<\/editor-img>/gm;
+      html = html.replace(regex, (value, img) => {
         return img;
-      }));
-      this.onChange(this.config.sanitize || this.config.sanitize === undefined ?
-        this.sanitizer.sanitize(SecurityContext.HTML, html) : html);
+      });
+
+      /* html = this.config.sanitize || this.config.sanitize === undefined ?
+       this.sanitizer.sanitize(SecurityContext.HTML, html) : html;*/
+
+      this.onChange(html);
       if ((!html) !== this.showPlaceholder) {
         this.togglePlaceholder(this.showPlaceholder);
       }
-      this.initImageResizers();
     }
     this.changed = true;
+    this.initImageResizers();
   }
 
   /**
@@ -265,7 +267,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
    * @param fn a function
    */
   registerOnChange(fn: any): void {
-    this.onChange = e => (e === '<br>' ? fn('') : fn(e)) ;
+    this.onChange = e => (e === '<br>' ? fn('') : fn(e));
   }
 
   /**
@@ -317,8 +319,16 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
         let range = document.createRange();
         range.selectNode(item);
         selection.addRange(range);
+
+        const widthAttr = item.getAttribute('width');
+        const heightAttr = item.getAttribute('height');
+
         this.editorService
-          .insertImage(this.config, true, item.getAttribute('src'), this.vcRef, area, { width: item.width, height: item.height, resizable: true })
+          .insertImage(this.config, true, item.getAttribute('src'), this.vcRef, area,
+            {
+              width: widthAttr ? Number.parseFloat(widthAttr) : Number.parseFloat(item.style.width),
+              height: heightAttr ? Number.parseFloat(heightAttr) : Number.parseFloat(item.style.height), resizable: true
+            })
           .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
       }
     })
@@ -447,7 +457,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   getFonts() {
     const fonts = this.config.fonts ? this.config.fonts : angularEditorConfig.fonts;
     return fonts.map(x => {
-      return {label: x.name, value: x.name};
+      return { label: x.name, value: x.name };
     });
   }
 
