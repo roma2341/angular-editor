@@ -244,7 +244,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
     if (typeof this.onChange === 'function') {
       const regex = /<editor-img\b[^>]*>(.*?)<\/editor-img>/gm;
       html = html.replace(regex, (value, img) => {
-        return img;
+        return `<span>${img}</span>`;
       });
 
       /* html = this.config.sanitize || this.config.sanitize === undefined ?
@@ -319,16 +319,22 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
         range.selectNode(item);
         selection.addRange(range);
 
+
+
         const widthAttr = item.getAttribute('width');
         const heightAttr = item.getAttribute('height');
 
-        this.editorService
-          .insertImage(this.config, true, item.getAttribute('src'), this.vcRef, area,
-            {
-              width: widthAttr ? Number.parseFloat(widthAttr) : Number.parseFloat(item.style.width),
-              height: heightAttr ? Number.parseFloat(heightAttr) : Number.parseFloat(item.style.height), resizable: true
-            })
+        this.editorService.insertImage(this.config, true, item.getAttribute('src'), this.vcRef, area,
+          {
+            width: widthAttr ? Number.parseFloat(widthAttr) : Number.parseFloat(item.style.width),
+            height: heightAttr ? Number.parseFloat(heightAttr) : Number.parseFloat(item.style.height), resizable: true
+          })
           .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
+        if (item.parentElement.tagName === 'SPAN') {
+          item.parentElement.remove();
+        } else {
+          item.remove();
+        }
       }
     })
   }
