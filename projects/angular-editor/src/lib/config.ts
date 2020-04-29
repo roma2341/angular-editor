@@ -26,6 +26,7 @@ export interface AngularEditorConfig {
   defaultFontName?: string;
   defaultFontSize?: '1' | '2' | '3' | '4' | '5' | '6' | '7' | string;
   uploadUrl?: string;
+  uploadWithCredentials?: boolean;
   fonts?: Font[];
   customClasses?: CustomClass[];
   sanitize?: boolean;
@@ -57,6 +58,7 @@ export const angularEditorConfig: AngularEditorConfig = {
     {class: 'comic-sans-ms', name: 'Comic Sans MS'}
   ],
   uploadUrl: null,
+  uploadWithCredentials: false,
   sanitize: true,
   toolbarPosition: 'top',
   outline: true,

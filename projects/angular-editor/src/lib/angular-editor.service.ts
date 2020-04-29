@@ -23,6 +23,7 @@ export class AngularEditorService {
   savedSelection: Range | null;
   selectedText: string;
   uploadUrl: string;
+  uploadWithCredentials: boolean;
 
   private _renderer: Renderer2;
 
@@ -175,6 +176,7 @@ export class AngularEditorService {
     return this.http.post<UploadResponse>(this.uploadUrl, uploadData, {
       reportProgress: true,
       observe: 'events',
+      withCredentials: this.uploadWithCredentials,
     });
   }
 

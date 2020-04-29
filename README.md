@@ -12,6 +12,7 @@
 [![dependencies Status](https://david-dm.org/kolkov/angular-editor/status.svg)](https://david-dm.org/kolkov/angular-editor)
 [![devDependencies Status](https://david-dm.org/kolkov/angular-editor/dev-status.svg)](https://david-dm.org/kolkov/angular-editor?type=dev)
 [![codecov](https://codecov.io/gh/kolkov/angular-editor/branch/master/graph/badge.svg)](https://codecov.io/gh/kolkov/angular-editor)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/AndreyKolkov)
 
 A simple native WYSIWYG/Rich Text editor for Angular 6-8+
 
@@ -32,7 +33,7 @@ npm install @kolkov/angular-editor --save
 ```
 ### Versions
 
-1.0.0 and above - for Angular v8.x.x
+1.0.0 and above - for Angular v8.x.x and above
 
 0.18.4 and above - for Angular v7.x.x
 
@@ -113,6 +114,7 @@ editorConfig: AngularEditorConfig = {
       },
     ],
     uploadUrl: 'v1/image',
+    uploadWithCredentials: false,
     sanitize: true,
     toolbarPosition: 'top',
     toolbarHiddenButtons: [
@@ -172,6 +174,7 @@ For `ngModel` to work, you must import `FormsModule` from `@angular/forms`, or f
 | defaultFontName  | `string` | `-` | no | Set default font such as `Comic Sans MS` |
 | defaultFontSize  | `string` | `-` | no | Set default font size such as `1` - `7` |
 | uploadUrl  | `string` | `-` | no | Set image upload endpoint `https://api.exapple.com/v1/image/upload` |
+| uploadWithCredentials | `bolean` | `false` | no | Set passing or not credentials in the image upload call |
 | fonts  | `Font[]` | `-` | no | Set array of available fonts  `[{name, class},...]` |
 | customClasses  | `CustomClass[]` | `-` | no | Set array of available fonts  `[{name, class, tag},...]` |
 | outline  | `bolean` | `true` | no | Set outline of the editor if in focus |
@@ -179,9 +182,40 @@ For `ngModel` to work, you must import `FormsModule` from `@angular/forms`, or f
 
 ```js
 toolbarHiddenButtons: [
-      ['bold', 'italic'],
-      ['fontSize']
-    ]
+  [
+    'undo',
+    'redo',
+    'bold',
+    'italic',
+    'underline',
+    'strikeThrough',
+    'subscript',
+    'superscript',
+    'justifyLeft',
+    'justifyCenter',
+    'justifyRight',
+    'justifyFull',
+    'indent',
+    'outdent',
+    'insertUnorderedList',
+    'insertOrderedList',
+    'heading',
+    'fontName'
+  ],
+  [
+    'fontSize',
+    'textColor',
+    'backgroundColor',
+    'customClasses',
+    'link',
+    'unlink',
+    'insertImage',
+    'insertVideo',
+    'insertHorizontalRule',
+    'removeFormat',
+    'toggleEditorMode'
+  ]
+]
 ```
 
 ## What's included
@@ -219,6 +253,10 @@ See [the Releases section of our project](https://github.com/kolkov/angular-edit
 **Andrey Kolkov**
 
 * <https://github.com/kolkov>
+
+## Donate
+
+If you like my work and I save your time you can buy me a :beer: or :pizza: [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://paypal.me/AndreyKolkov)
 
 [npm]: https://www.npmjs.com/package/@kolkov/angular-editor
 [demo]: https://angular-editor-wysiwyg.stackblitz.io/
