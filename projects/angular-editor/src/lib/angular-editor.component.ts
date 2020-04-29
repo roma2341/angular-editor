@@ -13,7 +13,6 @@ import {
   OnInit,
   Output,
   Renderer2,
-  SecurityContext,
   ViewChild,
   ElementRef,
   ViewContainerRef
@@ -77,7 +76,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
 
   @ViewChild('editor', { static: true }) textArea: ElementRef;
   @ViewChild('editorWrapper', { static: true }) editorWrapper: ElementRef;
-  @ViewChild('editorToolbar', { static: false }) editorToolbar: AngularEditorToolbarComponent;
+  @ViewChild('editorToolbar') editorToolbar: AngularEditorToolbarComponent;
 
 
   @Output() viewMode = new EventEmitter<boolean>();
@@ -312,14 +311,12 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
   initImageResizers() {
     const area = this.textArea.nativeElement as HTMLElement;
     area.querySelectorAll('img').forEach(item => {
-      if (item.parentElement.tagName != 'EDITOR-IMG') {
+      if (item.parentElement.tagName.toLocaleUpperCase() != 'EDITOR-IMG') {
         const selection = window.getSelection();
         selection.removeAllRanges();
         let range = document.createRange();
         range.selectNode(item);
         selection.addRange(range);
-
-
 
         const widthAttr = item.getAttribute('width');
         const heightAttr = item.getAttribute('height');
@@ -330,8 +327,9 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
             height: heightAttr ? Number.parseFloat(heightAttr) : Number.parseFloat(item.style.height), resizable: true
           })
           .instance.resizeEnd.subscribe(() => this.onContentChange(this.textArea.nativeElement.innerHTML));
-        if (item.parentElement.tagName === 'SPAN') {
+        if (item.parentElement && item.parentElement.tagName.toLocaleUpperCase() === 'SPAN') {
           item.parentElement.remove();
+          item.remove();
         } else {
           item.remove();
         }
@@ -401,7 +399,7 @@ export class AngularEditorComponent implements OnInit, ControlValueAccessor, Aft
       this.r.appendChild(editableElement, oPre);
 
       // ToDo move to service
-      this.doc.execCommand('defaultParagraphSeparator', false, 'div');
+      this.doc.execCommand('defaultParagraphSeparator', false, 'p');
 
       this.modeVisual = false;
       this.viewMode.emit(false);

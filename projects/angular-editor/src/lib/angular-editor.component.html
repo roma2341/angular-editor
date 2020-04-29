@@ -9,6 +9,7 @@
                           [defaultFontName]="config.defaultFontName"
                           [defaultFontSize]="config.defaultFontSize"
                           [hiddenButtons]="config.toolbarHiddenButtons"
+                          (fileAdded)="fileAdded.emit($event)"
                           (execute)="executeCommand($event)"></angular-editor-toolbar>
 
   <div class="angular-editor-wrapper" #editorWrapper>
@@ -41,5 +42,6 @@
                           [defaultFontName]="config.defaultFontName"
                           [defaultFontSize]="config.defaultFontSize"
                           [hiddenButtons]="config.toolbarHiddenButtons"
+                          (fileAdded)="fileAdded.emit($event)"
                           (execute)="executeCommand($event)"></angular-editor-toolbar>
 </div>

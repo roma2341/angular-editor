@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, Attribute, ViewContainerRef, ElementRef, ViewChild, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ViewContainerRef, ElementRef, ViewChild, Output, EventEmitter, OnDestroy, AfterViewInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ResizeEvent } from 'angular-resizable-element';
 export class EditorResizableImgConfig {

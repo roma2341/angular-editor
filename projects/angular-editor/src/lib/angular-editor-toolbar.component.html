@@ -1,16 +1,18 @@
 <div class="angular-editor-toolbar" *ngIf="showToolbar">
   <div class="angular-editor-toolbar-set">
     <button type="button" title="Undo" class="angular-editor-button" (click)="triggerCommand('undo')" tabindex="-1"><i
-      class='material-icons'>undo</i></button>
+         class='material-icons'>undo</i></button>
     <button type="button" title="Redo" class="angular-editor-button" (click)="triggerCommand('redo')" tabindex="-1"><i
-      class='material-icons'>redo</i></button>
+         class='material-icons'>redo</i></button>
   </div>
   <div class="angular-editor-toolbar-set">
     <button [id]="'bold-'+id" type="button" title="Bold" class="angular-editor-button" (click)="triggerCommand('bold')"
-            [disabled]="htmlMode" [hidden]="isButtonHidden('bold')" tabindex="-1"><i class='material-icons'>format_bold</i></button>
+            [disabled]="htmlMode" [hidden]="isButtonHidden('bold')" tabindex="-1"><i
+         class='material-icons'>format_bold</i></button>
     <button [id]="'italic-'+id" type="button" title="Italic" class="angular-editor-button"
             (click)="triggerCommand('italic')"
-            [disabled]="htmlMode" [hidden]="isButtonHidden('italic')" tabindex="-1"><i class='material-icons'>format_italic</i>
+            [disabled]="htmlMode" [hidden]="isButtonHidden('italic')" tabindex="-1"><i
+         class='material-icons'>format_italic</i>
     </button>
     <button [id]="'underline-'+id" type="button" title="Underline" class="angular-editor-button"
             (click)="triggerCommand('underline')" [disabled]="htmlMode" [hidden]="isButtonHidden('underline')"
@@ -18,22 +20,24 @@
     <button [id]="'strikeThrough-'+id" type="button" title="Strikethrough" class="angular-editor-button"
             (click)="triggerCommand('strikeThrough')" [disabled]="htmlMode" [hidden]="isButtonHidden('strikeThrough')"
             tabindex="-1"><i class='material-icons'>format_strikethrough</i></button>
+    <!--
     <button [id]="'subscript-'+id" type="button" title="Subscript" class="angular-editor-button"
             (click)="triggerCommand('subscript')" [disabled]="htmlMode" [hidden]="isButtonHidden('subscript')"
             tabindex="-1"><i class='material-icons'>format_strikethrough</i></button>
     <button [id]="'superscript-'+id" type="button" title="Superscript" class="angular-editor-button"
             (click)="triggerCommand('superscript')" [disabled]="htmlMode" [hidden]="isButtonHidden('superscript')"
             tabindex="-1"><i class='material-icons'>format_strikethrough</i></button>
+            -->
   </div>
   <div class="angular-editor-toolbar-set">
     <button [id]="'justifyLeft-'+id" type="button" title="Justify Left" class="angular-editor-button"
             (click)="triggerCommand('justifyLeft')" [disabled]="htmlMode" [hidden]="isButtonHidden('justifyLeft')"
             tabindex="-1"><i
-      class='material-icons'>format_align_left</i></button>
+         class='material-icons'>format_align_left</i></button>
     <button [id]="'justifyCenter-'+id" type="button" title="Justify Center" class="angular-editor-button"
             (click)="triggerCommand('justifyCenter')" [disabled]="htmlMode" [hidden]="isButtonHidden('justifyCenter')"
             tabindex="-1"><i
-      class='material-icons'>format_align_center</i></button>
+         class='material-icons'>format_align_center</i></button>
     <button [id]="'justifyRight-'+id" type="button" title="Justify Right" class="angular-editor-button"
             (click)="triggerCommand('justifyRight')" [disabled]="htmlMode" [hidden]="isButtonHidden('justifyRight')"
             tabindex="-1">
@@ -41,27 +45,27 @@
     <button [id]="'justifyFull-'+id" type="button" title="Justify Full" class="angular-editor-button"
             (click)="triggerCommand('justifyFull')" [disabled]="htmlMode" [hidden]="isButtonHidden('justifyFull')"
             tabindex="-1"><i
-      class='material-icons'>format_align_justify</i></button>
+         class='material-icons'>format_align_justify</i></button>
   </div>
   <div class="angular-editor-toolbar-set">
     <button [id]="'indent-'+id" type="button" title="Indent" class="angular-editor-button"
             (click)="triggerCommand('indent')"
             [disabled]="htmlMode" [hidden]="isButtonHidden('indent')" tabindex="-1"><i
-      class='material-icons'>format_indent_decrease</i></button>
+         class='material-icons'>format_indent_decrease</i></button>
     <button [id]="'outdent-'+id" type="button" title="Outdent" class="angular-editor-button"
             (click)="triggerCommand('outdent')"
             [disabled]="htmlMode" [hidden]="isButtonHidden('outdent')" tabindex="-1"><i
-      class='material-icons'>format_indent_increase</i></button>
+         class='material-icons'>format_indent_increase</i></button>
   </div>
   <div class="angular-editor-toolbar-set">
     <button [id]="'insertUnorderedList-'+id" type="button" title="Unordered List" class="angular-editor-button"
             (click)="triggerCommand('insertUnorderedList')" [disabled]="htmlMode"
             [hidden]="isButtonHidden('insertUnorderedList')" tabindex="-1"><i
-      class='material-icons'>format_list_bulleted</i></button>
+         class='material-icons'>format_list_bulleted</i></button>
     <button [id]="'insertOrderedList-'+id" type="button" title="Ordered List" class="angular-editor-button"
             (click)="triggerCommand('insertOrderedList')" [disabled]="htmlMode"
             [hidden]="isButtonHidden('insertOrderedList')" tabindex="-1"><i
-      class='material-icons'>format_list_numbered</i></button>
+         class='material-icons'>format_list_numbered</i></button>
   </div>
   <div class="angular-editor-toolbar-set">
 
@@ -93,22 +97,22 @@
   </div>
   <div class="angular-editor-toolbar-set">
     <input
-      style="display: none"
-      type="color" (change)="insertColor(fgInput.value, 'textColor')"
-      #fgInput>
+           style="display: none"
+           type="color" (change)="insertColor(fgInput.value, 'textColor')"
+           #fgInput>
     <button [id]="'foregroundColorPicker-'+id" type="button" class="angular-editor-button" (click)="fgInput.click()"
             title="Text Color"
             [disabled]="htmlMode" [hidden]="isButtonHidden('textColor')" tabindex="-1"><span
-      class="color-label foreground"><i class="material-icons">text_format</i></span>
+            class="color-label foreground"><i class="material-icons">text_format</i></span>
     </button>
     <input
-      style="display: none"
-      type="color" (change)="insertColor(bgInput.value, 'backgroundColor')"
-      #bgInput>
+           style="display: none"
+           type="color" (change)="insertColor(bgInput.value, 'backgroundColor')"
+           #bgInput>
     <button [id]="'backgroundColorPicker-'+id" type="button" class="angular-editor-button" (click)="bgInput.click()"
             title="Background Color"
             [disabled]="htmlMode" [hidden]="isButtonHidden('backgroundColor')" tabindex="-1"><span
-      class="color-label background"><i class="material-icons">font_download</i></span>
+            class="color-label background"><i class="material-icons">font_download</i></span>
     </button>
   </div>
   <div *ngIf="_customClasses" class="angular-editor-toolbar-set">
@@ -129,23 +133,31 @@
       <i class="material-icons">link_off</i>
     </button>
     <input
-      style="display: none"
-      accept="image/*"
-      type="file" (change)="onFileChanged($event)"
-      #fileInput>
-    <button [id]="'insertImage-'+id" type="button" class="angular-editor-button" (click)="fileInput.click()"
+           style="display: none"
+           accept="image/*"
+           type="file" (change)="onFileChanged($event)"
+           #imgInput>
+    <button [id]="'insertImage-'+id" type="button" class="angular-editor-button" (click)="imgInput.click()"
             title="Insert Image"
-            [disabled]="htmlMode" [hidden]="isButtonHidden('insertImage')" tabindex="-1"><i class="material-icons">image</i>
+            [disabled]="htmlMode" [hidden]="isButtonHidden('insertImage')" tabindex="-1"><i
+         class="material-icons">image</i>
     </button>
     <button [id]="'insertVideo-'+id" type="button" class="angular-editor-button"
             (click)="insertVideo()" title="Insert Video" [disabled]="htmlMode" [hidden]="isButtonHidden('insertVideo')"
             tabindex="-1"><i
-      class="material-icons">video_library</i></button>
+         class="material-icons">video_library</i></button>
     <button [id]="'insertHorizontalRule-'+id" type="button" title="Horizontal Line" class="angular-editor-button"
             (click)="triggerCommand('insertHorizontalRule')" [disabled]="htmlMode"
             [hidden]="isButtonHidden('insertHorizontalRule')" tabindex="-1"><i
-      class='material-icons'>minimize</i></button>
+         class='material-icons'>minimize</i></button>
+    <input style="display: none" type="file" (change)="onFileChanged($event)" #fileInput>
+    <button [id]="'insertFile-'+id" type="button" class="angular-editor-button" (click)="fileInput.click()"
+            title="Insert File"
+            [disabled]="htmlMode" [hidden]="isButtonHidden('insertImage')" tabindex="-1"><i
+         class="material-icons">attach_file</i>
+    </button>
   </div>
+
   <div class="angular-editor-toolbar-set">
     <button [id]="'clearFormatting-'+id" type="button" title="Clear Formatting" class="angular-editor-button"
             (click)="triggerCommand('removeFormat')" [disabled]="htmlMode" [hidden]="isButtonHidden('removeFormat')"
@@ -155,6 +167,6 @@
   <div class="angular-editor-toolbar-set">
     <button [id]="'toggleEditorMode-'+id" type="button" title="HTML Code" class="angular-editor-button"
             (click)="triggerCommand('toggleEditorMode')" [hidden]="isButtonHidden('toggleEditorMode')" tabindex="-1"><i
-            class="material-icons">code</i></button>
+         class="material-icons">code</i></button>
   </div>
 </div>

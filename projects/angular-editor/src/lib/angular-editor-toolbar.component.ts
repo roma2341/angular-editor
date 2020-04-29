@@ -15,7 +15,7 @@ import { SelectOption } from './ae-select/ae-select.component';
 export class AngularEditorToolbarComponent {
   htmlMode = false;
   linkSelected = false;
-  block = 'default';
+  block = 'p';
   fontName = 'Times New Roman';
   fontSize = '3';
   foreColour;
@@ -154,7 +154,7 @@ export class AngularEditorToolbarComponent {
   @Input()
   textArea: HTMLElement;
 
-  @ViewChild('fileInput', { static: false }) myInputFile: ElementRef;
+  @ViewChild('fileInput') myInputFile: ElementRef;
 
   public get isLinkButtonDisabled(): boolean {
     return this.htmlMode || !Boolean(this.editorService.selectedText);

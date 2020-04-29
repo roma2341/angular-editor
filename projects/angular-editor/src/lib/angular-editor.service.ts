@@ -230,7 +230,8 @@ export class AngularEditorService {
    * Insert image with Url
    * @param imageUrl The imageUrl.
    */
-  insertImage(angularEditorConfig: AngularEditorConfig, local: boolean, imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement, config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
+  insertImage(angularEditorConfig: AngularEditorConfig, local: boolean, imageUrl: string, vcRef: ViewContainerRef, textArea: HTMLElement,
+    config?: EditorResizableImgConfig): ComponentRef<EditorResizableImgComponent> {
     const factory: ComponentFactory<EditorResizableImgComponent> = this.componentFactoryResolver.resolveComponentFactory(EditorResizableImgComponent);
     const img = vcRef.createComponent(factory);
     img.instance.src = PRELODER_IMAGE;
